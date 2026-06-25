@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMOS FLOW - Tự động hóa hybrid cho doanh nghiệp</title>
-<meta name="description" content="AMOS FLOW: nền tảng tự động hóa AI-native, self-hosted. Lõi deterministic auditable cộng AI supervisor tự chữa lỗi. Không thuế per-bot, air-gap, audit-first.">
+<title>AMOS FLOW — Smart Automation for Modern Business</title>
+<meta name="description" content="AMOS FLOW is an AI-powered automation platform that runs inside your own infrastructure. Reliable, easy to manage, fully auditable — with no per-robot fees.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -106,12 +106,12 @@
   .sec-head p{color:var(--muted); font-size:18px; margin-top:18px; max-width:60ch}
 
   /* ---------- stats band ---------- */
-  .band{border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:linear-gradient(180deg,rgba(249,115,98,.04),transparent 60%)}
+  .band{border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:linear-gradient(180deg,rgba(34,211,184,.05),transparent 60%)}
   .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:0}
   .stat{padding:46px 30px; border-right:1px solid var(--border)}
   .stat:last-child{border-right:none}
   .stat .num{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(44px,5vw,64px); color:#fff; letter-spacing:-.03em; line-height:1}
-  .stat .num .u{color:var(--danger)}
+  .stat .num .u{color:var(--accent2)}
   .stat .lab{color:var(--muted); font-size:15px; margin-top:12px; max-width:24ch}
   .band-note{color:var(--faint); font-size:13px; padding:0 30px 40px}
 
@@ -173,14 +173,14 @@
 
   /* ---------- architecture ---------- */
   .arch{display:flex; flex-direction:column; gap:14px; position:relative}
-  .layer{display:grid; grid-template-columns:170px 1fr; gap:20px; align-items:center; border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:22px 24px; position:relative; overflow:hidden}
+  .layer{display:grid; grid-template-columns:190px 1fr; gap:20px; align-items:center; border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:22px 24px; position:relative; overflow:hidden}
   .layer .lname{display:flex; align-items:center; gap:12px; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:18px}
   .layer .lname i{font-size:24px; color:var(--accent2)}
   .layer.bb{border-color:rgba(34,211,184,.34)}
   .modrow{display:flex; gap:12px; flex-wrap:wrap}
   .mod{border:1px solid var(--border); border-radius:10px; padding:11px 15px; font-size:14px; background:var(--bg2)}
   .mod b{font-weight:500} .mod span{color:var(--faint); font-size:12.5px; display:block; margin-top:2px}
-  .arch-pulse{position:absolute; left:84px; top:0; width:12px;height:12px;border-radius:50%; background:var(--accent2); box-shadow:0 0 18px var(--accent2); animation:fall 4s var(--ease) infinite}
+  .arch-pulse{position:absolute; left:94px; top:0; width:12px;height:12px;border-radius:50%; background:var(--accent2); box-shadow:0 0 18px var(--accent2); animation:fall 4s var(--ease) infinite}
   @keyframes fall{0%{top:-6px;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
   .arch-base{display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; justify-content:center}
   .chip{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2); border:1px solid var(--border); border-radius:999px; padding:9px 16px; background:rgba(34,211,184,.05)}
@@ -276,23 +276,23 @@
     <nav class="navbar">
       <a href="#top" class="brand"><span class="dot"></span>AMOS FLOW</a>
       <div class="navlinks">
-        <a href="#features">Chức năng</a>
-        <a href="#how">Cách hoạt động</a>
-        <a href="#arch">Kiến trúc</a>
-        <a href="#security">Bảo mật</a>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#arch">Platform</a>
+        <a href="#security">Security</a>
       </div>
       <div class="nav-right">
-        <a href="#cta" class="btn btn-ghost">Đăng nhập</a>
-        <a href="#cta" class="btn btn-primary">Đặt lịch demo</a>
-        <button class="hamburger" id="hb" aria-label="Mở menu"><i class="ph ph-list"></i></button>
+        <a href="#cta" class="btn btn-ghost">Sign in</a>
+        <a href="#cta" class="btn btn-primary">Book a demo</a>
+        <button class="hamburger" id="hb" aria-label="Open menu"><i class="ph ph-list"></i></button>
       </div>
     </nav>
     <div class="mobile-menu" id="mm">
-      <a href="#features">Chức năng</a>
-      <a href="#how">Cách hoạt động</a>
-      <a href="#arch">Kiến trúc</a>
-      <a href="#security">Bảo mật</a>
-      <a href="#cta">Đặt lịch demo</a>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#arch">Platform</a>
+      <a href="#security">Security</a>
+      <a href="#cta">Book a demo</a>
     </div>
   </div>
 </header>
@@ -301,17 +301,17 @@
 <section id="top"><div class="wrap">
   <div class="hero">
     <div class="hero-copy">
-      <span class="eyebrow">AI-native · self-hosted</span>
-      <h1 style="margin-top:18px">Thay thế RPA dễ gãy bằng <span class="accent-text">tự động hóa hybrid</span>.</h1>
-      <p class="sub">Lõi deterministic auditable, cộng một AI supervisor tự chữa lỗi và sinh workflow từ ngôn ngữ tự nhiên. Self-hosted, air-gap, không thuế per-bot.</p>
+      <span class="eyebrow">AI-powered · Runs on your infrastructure</span>
+      <h1 style="margin-top:18px">Automate your business with the <span class="accent-text">reliability of rules and the intelligence of AI</span>.</h1>
+      <p class="sub">AMOS FLOW pairs dependable, rule-based automation with an AI assistant that builds and fixes your workflows for you — all running securely inside your own environment.</p>
       <div class="hero-cta">
-        <a href="#cta" class="btn btn-primary"><i class="ph ph-calendar-check"></i>Đặt lịch demo</a>
-        <a href="#how" class="btn btn-ghost">Xem cách hoạt động</a>
+        <a href="#cta" class="btn btn-primary"><i class="ph ph-calendar-check"></i>Book a demo</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
       </div>
       <div class="pill-row">
-        <span class="pill"><i class="ph-fill ph-shield-check"></i>Deterministic core</span>
-        <span class="pill"><i class="ph-fill ph-sparkle"></i>AI supervisor</span>
-        <span class="pill"><i class="ph-fill ph-lock-key"></i>Air-gap capable</span>
+        <span class="pill"><i class="ph-fill ph-shield-check"></i>Dependable by design</span>
+        <span class="pill"><i class="ph-fill ph-sparkle"></i>AI assistant built in</span>
+        <span class="pill"><i class="ph-fill ph-lock-key"></i>Runs in your network</span>
       </div>
     </div>
     <div class="core-stage" aria-hidden="true">
@@ -343,8 +343,8 @@
         <!-- core -->
         <g class="corebox">
           <rect x="196" y="218" width="128" height="84" rx="16" fill="#0F1A2E" stroke="url(#g1)" stroke-width="2.5"/>
-          <text x="260" y="252" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#EAF0FB">Lõi</text>
-          <text x="260" y="276" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#22D3B8">deterministic</text>
+          <text x="260" y="252" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="17" font-weight="700" fill="#EAF0FB">AMOS</text>
+          <text x="260" y="276" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#22D3B8">core engine</text>
         </g>
       </svg>
     </div>
@@ -354,85 +354,85 @@
 <!-- STATS BAND -->
 <section class="band"><div class="wrap" style="padding-top:54px">
   <div class="sec-head reveal" style="margin-bottom:30px">
-    <h2 style="font-size:clamp(26px,3vw,38px)">RPA truyền thống không scale được</h2>
-    <p>Selector dễ gãy biến bảo trì thành tất yếu kiến trúc, không phải sự cố ngẫu nhiên.</p>
+    <h2 style="font-size:clamp(26px,3vw,38px)">Automation that keeps working</h2>
+    <p>Less time spent fixing, more time saved. AMOS FLOW is built to stay reliable even as your apps and systems change.</p>
   </div>
   <div class="stats reveal">
-    <div class="stat"><div class="num counter" data-target="50" data-pre="tới ">tới 50<span class="u">%</span></div><div class="lab">dự án RPA thất bại hoặc bị bỏ dở</div></div>
-    <div class="stat"><div class="num counter" data-target="45">45<span class="u">%</span></div><div class="lab">doanh nghiệp gặp bot gãy hằng tuần</div></div>
-    <div class="stat"><div class="num counter" data-target="50" data-pre="tới ">tới 50<span class="u">%</span></div><div class="lab">ngân sách triển khai cho bảo trì mỗi năm</div></div>
-    <div class="stat"><div class="num counter" data-target="60" data-suf="+">60<span class="u">+</span></div><div class="lab">điểm gãy mỗi năm trên 15 hệ thống</div></div>
+    <div class="stat"><div class="num counter" data-target="50" data-pre="up to ">up to 50<span class="u">%</span></div><div class="lab">less time spent maintaining automations</div></div>
+    <div class="stat"><div class="num counter" data-target="70">70<span class="u">%</span></div><div class="lab">faster to build a new automation</div></div>
+    <div class="stat"><div class="num counter" data-target="100">100<span class="u">%</span></div><div class="lab">of actions logged and auditable</div></div>
+    <div class="stat"><div class="num counter" data-target="60" data-suf="+">60<span class="u">+</span></div><div class="lab">business apps and systems connected</div></div>
   </div>
-  <p class="band-note mono">Nguồn: tổng hợp thị trường RPA, BRD AMOS FLOW</p>
+  <p class="band-note mono">Results vary by process and environment.</p>
 </div></section>
 
 <!-- HOW IT WORKS -->
 <section id="how" class="sec-pad"><div class="wrap">
   <div class="sec-head reveal">
-    <span class="eyebrow">Cách hoạt động</span>
-    <h2 style="margin-top:16px">Từ một câu mô tả đến tự động hóa chạy được</h2>
-    <p>Business Analyst mô tả bằng lời. AMOS sinh workflow hợp lệ, người duyệt qua sơ đồ, rồi nó chạy deterministic và tự chữa khi giao diện đổi.</p>
+    <span class="eyebrow">How it works</span>
+    <h2 style="margin-top:16px">From a plain-English description to a working automation</h2>
+    <p>Describe the process in your own words. AMOS builds it, you review and approve it on a simple diagram, then it runs on its own — and repairs itself when your apps change.</p>
   </div>
   <div class="pipe reveal">
-    <div class="step"><div class="node"><i class="ph ph-chat-text"></i></div><span class="idx mono">01</span><h3>Comprehend</h3><p>Đọc NL hoặc SOP, sinh Process IR</p></div>
-    <div class="step"><div class="node"><i class="ph ph-file-code"></i></div><span class="idx mono">02</span><h3>Author</h3><p>Compile IR thành DSL hợp lệ</p></div>
-    <div class="step"><div class="node"><i class="ph ph-check-square-offset"></i></div><span class="idx mono">03</span><h3>Review</h3><p>Sơ đồ read-only, duyệt bằng diff</p></div>
-    <div class="step"><div class="node"><i class="ph ph-play-circle"></i></div><span class="idx mono">04</span><h3>Run</h3><p>Temporal điều phối, runner thực thi</p></div>
-    <div class="step"><div class="node"><i class="ph ph-pulse"></i></div><span class="idx mono">05</span><h3>Monitor</h3><p>Execution trace đầy đủ</p></div>
-    <div class="step key"><div class="node"><i class="ph ph-heartbeat"></i></div><span class="idx mono">06</span><h3>Self-heal</h3><p>Đề xuất bản vá dạng diff</p></div>
+    <div class="step"><div class="node"><i class="ph ph-chat-text"></i></div><span class="idx mono">01</span><h3>Describe</h3><p>Explain the process in plain language</p></div>
+    <div class="step"><div class="node"><i class="ph ph-file-code"></i></div><span class="idx mono">02</span><h3>Build</h3><p>AMOS turns it into clear steps</p></div>
+    <div class="step"><div class="node"><i class="ph ph-check-square-offset"></i></div><span class="idx mono">03</span><h3>Review</h3><p>Check the diagram and approve</p></div>
+    <div class="step"><div class="node"><i class="ph ph-play-circle"></i></div><span class="idx mono">04</span><h3>Run</h3><p>It runs automatically, start to finish</p></div>
+    <div class="step"><div class="node"><i class="ph ph-pulse"></i></div><span class="idx mono">05</span><h3>Track</h3><p>See every step and result live</p></div>
+    <div class="step key"><div class="node"><i class="ph ph-heartbeat"></i></div><span class="idx mono">06</span><h3>Self-repair</h3><p>When apps change, it proposes a fix</p></div>
   </div>
 </div></section>
 
 <!-- FEATURES / BENTO -->
 <section id="features" class="sec-pad"><div class="wrap">
   <div class="sec-head reveal">
-    <h2>Mọi chức năng để tự động hóa nghiêm túc</h2>
-    <p>Mười lăm trụ năng lực, đóng gói thành một nền tảng single-tenant chạy trên hạ tầng của bạn.</p>
+    <h2>Everything you need to automate with confidence</h2>
+    <p>A complete platform that runs entirely on your own infrastructure — nothing leaves your environment.</p>
   </div>
   <div class="bento">
     <div class="cell grad c-wide c-tall reveal">
       <div class="ico"><i class="ph ph-sparkle"></i></div>
-      <h3>AI Authoring</h3>
-      <p>Sinh workflow từ ngôn ngữ tự nhiên và SOP. Constrained decoding đảm bảo DSL luôn hợp lệ, trình bày bằng sơ đồ read-only để duyệt.</p>
+      <h3>Build with AI</h3>
+      <p>Describe a process in everyday words and AMOS creates a ready-to-run automation. Review it on a clear visual diagram before anything goes live.</p>
       <div class="feat-list" style="margin-top:20px">
-        <div class="li"><i class="ph ph-git-diff"></i><div><b>AI-edit as diff</b>, duyệt như một pull request</div></div>
-        <div class="li"><i class="ph ph-graph"></i><div><b>Semantic diff</b> trước và sau mỗi thay đổi</div></div>
+        <div class="li"><i class="ph ph-git-diff"></i><div>Every change is <b>shown for review</b>, like approving a document</div></div>
+        <div class="li"><i class="ph ph-graph"></i><div>See exactly <b>what changed</b>, before and after</div></div>
       </div>
     </div>
     <div class="cell c-sm reveal">
       <div class="ico"><i class="ph ph-arrows-clockwise"></i></div>
-      <h3>Durable runtime</h3>
-      <p>Interpreter trên Temporal. Replay được, không lặp side-effect.</p>
+      <h3>Never loses work</h3>
+      <p>If something is interrupted, AMOS picks up exactly where it left off.</p>
     </div>
     <div class="cell c-sm reveal">
       <div class="ico"><i class="ph ph-key"></i></div>
-      <h3>Credential Vault</h3>
-      <p>Envelope-encryption, giải mã JIT trên runner. Secret không rò rỉ.</p>
+      <h3>Secure credentials</h3>
+      <p>Passwords and keys stay encrypted and are used only when needed.</p>
     </div>
     <div class="cell dotted c-sm reveal">
       <div class="ico"><i class="ph ph-stack"></i></div>
-      <h3>Runner fleet</h3>
-      <p>Headless, stateless, outbound-only. Scale bằng thêm host rẻ.</p>
+      <h3>Scales easily</h3>
+      <p>Handle more work by adding simple, low-cost machines — no extra licenses.</p>
     </div>
     <div class="cell c-sm reveal">
       <div class="ico"><i class="ph ph-plugs-connected"></i></div>
-      <h3>MCP có governance</h3>
-      <p>Mỗi connector là một MCP server, qua gateway kiểm soát.</p>
+      <h3>Controlled connections</h3>
+      <p>Connect to your apps through a secure gateway you fully control.</p>
     </div>
     <div class="cell grad c-sm reveal">
       <div class="ico"><i class="ph ph-heartbeat"></i></div>
-      <h3>Self-heal agent</h3>
-      <p>Tự chữa selector hỏng, mặc định suggest-only.</p>
+      <h3>Fixes itself</h3>
+      <p>When an app changes, AMOS repairs the automation and asks you to approve.</p>
     </div>
     <div class="cell c-mid reveal">
       <div class="ico"><i class="ph ph-seal-check"></i></div>
-      <h3>Governance &amp; audit</h3>
-      <p>RBAC hai tầng, folder isolation, audit hash-chained bất biến phủ mọi hành động người và agent.</p>
+      <h3>Full control &amp; audit</h3>
+      <p>Role-based access plus a complete, tamper-proof record of every action — by people and AI alike.</p>
     </div>
     <div class="cell c-mid reveal">
       <div class="ico"><i class="ph ph-chart-line-up"></i></div>
-      <h3>Observability &amp; ROI</h3>
-      <p>OpenTelemetry, dashboard run và agent, cùng ROI instrumentation đo bằng chứng giá trị.</p>
+      <h3>Proof of value</h3>
+      <p>Clear dashboards show what's running and the real time and money you're saving.</p>
     </div>
   </div>
 </div></section>
@@ -441,25 +441,25 @@
 <section class="sec-pad"><div class="wrap">
   <div class="heal">
     <div class="reveal">
-      <span class="eyebrow">Wedge sắc nhất</span>
-      <h2 style="margin-top:16px">Self-heal: cắt thuế bảo trì, không mất kiểm soát</h2>
-      <p class="lead">Khi selector gãy, AMOS leo thang qua nhiều chiến lược và đề xuất bản vá. AI không bao giờ tự ý sửa một bước trọng yếu đang chạy.</p>
+      <span class="eyebrow">What sets us apart</span>
+      <h2 style="margin-top:16px">Automations that fix themselves — without losing control</h2>
+      <p class="lead">When an app changes and an automation would normally stop working, AMOS repairs it for you and suggests the fix for approval. It never changes a critical step on its own.</p>
       <div class="heal-steps">
-        <div class="hs"><span class="n">01</span><i class="ph ph-target"></i><div><b>Fallback selector.</b> <span>Multi-anchor capture, thử selector dự phòng.</span></div></div>
-        <div class="hs"><span class="n">02</span><i class="ph ph-arrows-clockwise"></i><div><b>Regen.</b> <span>Sinh lại selector, giữ nguyên intent của bước.</span></div></div>
-        <div class="hs"><span class="n">03</span><i class="ph ph-brain"></i><div><b>Semantic re-match.</b> <span>Khớp lại phần tử theo ngữ nghĩa.</span></div></div>
-        <div class="hs"><span class="n">04</span><i class="ph ph-eye"></i><div><b>Vision grounding.</b> <span>Định vị bằng thị giác máy tính.</span></div></div>
+        <div class="hs"><span class="n">01</span><i class="ph ph-target"></i><div><b>Try a backup.</b> <span>Look for a reliable alternative first.</span></div></div>
+        <div class="hs"><span class="n">02</span><i class="ph ph-arrows-clockwise"></i><div><b>Rebuild.</b> <span>Recreate the step, keeping its original intent.</span></div></div>
+        <div class="hs"><span class="n">03</span><i class="ph ph-brain"></i><div><b>Smart match.</b> <span>Find the right element by meaning, not just position.</span></div></div>
+        <div class="hs"><span class="n">04</span><i class="ph ph-eye"></i><div><b>Visual locate.</b> <span>As a last resort, find it visually, like a person would.</span></div></div>
       </div>
     </div>
     <div class="demo stage-broken reveal" id="healDemo">
-      <div class="hdr">live self-heal</div>
-      <div class="selnode"><i class="ph ph-cursor-click ic"></i>button.login-submit <span style="margin-left:auto;color:var(--danger)" id="brokenLbl">selector gãy</span></div>
+      <div class="hdr">live self-repair</div>
+      <div class="selnode"><i class="ph ph-cursor-click ic"></i>Sign-in button <span style="margin-left:auto;color:var(--danger)" id="brokenLbl">not found</span></div>
       <div class="cascade">
-        <div class="cc"><i class="ph ph-target"></i>thử fallback selector</div>
-        <div class="cc"><i class="ph ph-arrows-clockwise"></i>regen, giữ intent</div>
-        <div class="cc"><i class="ph ph-brain"></i>semantic re-match</div>
+        <div class="cc"><i class="ph ph-target"></i>trying a backup</div>
+        <div class="cc"><i class="ph ph-arrows-clockwise"></i>rebuilding the step</div>
+        <div class="cc"><i class="ph ph-brain"></i>smart matching</div>
       </div>
-      <div class="healed" id="healed"><i class="ph ph-check-circle"></i>đã chữa, chờ duyệt<span class="diff-tag">DSL diff · audited</span></div>
+      <div class="healed" id="healed"><i class="ph ph-check-circle"></i>fixed, waiting for approval<span class="diff-tag">change · logged</span></div>
     </div>
   </div>
 </div></section>
@@ -467,55 +467,55 @@
 <!-- ARCHITECTURE -->
 <section id="arch" class="sec-pad"><div class="wrap">
   <div class="sec-head reveal">
-    <h2>Thiết kế để scale rẻ và chạy trong air-gap</h2>
-    <p>Tách control-plane khỏi runner stateless, đặt một durable backbone Temporal làm xương sống. Đó là điều kiện cho cả scale không per-bot lẫn air-gap single-tenant.</p>
+    <h2>Built to run securely inside your own environment</h2>
+    <p>AMOS runs entirely on your infrastructure — even fully offline. It's designed to scale affordably and to never lose track of your work.</p>
   </div>
   <div class="arch reveal">
     <div class="arch-pulse"></div>
     <div class="layer">
-      <div class="lname"><i class="ph ph-squares-four"></i>Control plane</div>
+      <div class="lname"><i class="ph ph-squares-four"></i>Control center</div>
       <div class="modrow">
-        <div class="mod"><b>API + Orchestrator</b><span>điều phối run</span></div>
-        <div class="mod"><b>Authoring</b><span>comprehend, author</span></div>
-        <div class="mod"><b>Vault</b><span>envelope, JIT</span></div>
-        <div class="mod"><b>Governance</b><span>audit hash-chained</span></div>
+        <div class="mod"><b>Builds workflows</b><span>turns plain language into steps</span></div>
+        <div class="mod"><b>Secures credentials</b><span>encrypted, used only when needed</span></div>
+        <div class="mod"><b>Tracks every action</b><span>complete audit record</span></div>
+        <div class="mod"><b>Manages approvals</b><span>sign-off where it matters</span></div>
       </div>
     </div>
     <div class="layer bb">
-      <div class="lname"><i class="ph ph-arrows-clockwise"></i>Durable backbone</div>
+      <div class="lname"><i class="ph ph-arrows-clockwise"></i>Reliable backbone</div>
       <div class="modrow">
-        <div class="mod" style="flex:1"><b>Temporal</b><span>event-history là nguồn state duy nhất, replay được, idempotency, kill runner thì resume không lặp side-effect</span></div>
+        <div class="mod" style="flex:1"><b>Always-on engine</b><span>keeps every automation on track — if a machine goes down mid-task, the work resumes automatically without repeating steps already done</span></div>
       </div>
     </div>
     <div class="layer">
-      <div class="lname"><i class="ph ph-hard-drives"></i>Runner fleet</div>
+      <div class="lname"><i class="ph ph-hard-drives"></i>Workers</div>
       <div class="modrow">
-        <div class="mod"><b>Runner headless</b><span>Playwright, API, file, DB</span></div>
-        <div class="mod"><b>Agent outbound-only</b><span>enroll, heartbeat, lease</span></div>
-        <div class="mod"><b>Sandbox</b><span>gVisor, container</span></div>
+        <div class="mod"><b>Run the tasks</b><span>web, apps, files and databases</span></div>
+        <div class="mod"><b>Outbound only</b><span>nothing exposed to the internet</span></div>
+        <div class="mod"><b>Isolated</b><span>sandboxed for safety</span></div>
       </div>
     </div>
   </div>
   <div class="arch-base reveal">
-    <span class="chip">Config-as-Code + GitOps</span>
-    <span class="chip">Single-tenant on-prem</span>
-    <span class="chip">Air-gap capable</span>
-    <span class="chip">BYO-LLM</span>
+    <span class="chip">Configured as code</span>
+    <span class="chip">Runs on your servers</span>
+    <span class="chip">Works fully offline</span>
+    <span class="chip">Use your own AI model</span>
   </div>
 </div></section>
 
 <!-- WEDGE -->
 <section class="sec-pad"><div class="wrap">
   <div class="sec-head reveal">
-    <h2>Wedge mà incumbent không thể sao chép cùng lúc</h2>
-    <p>AI-native nay là điều kiện cần. AMOS thắng bằng năm khác biệt xếp tầng.</p>
+    <h2>Five advantages others can't match at once</h2>
+    <p>AI features alone aren't enough. AMOS combines five strengths that no other vendor offers together.</p>
   </div>
   <div class="wedge">
-    <div class="wrow reveal"><div class="wn">01</div><div><h3>Không thuế per-bot</h3><p>Scale bằng thêm runner host rẻ trên hạ tầng khách, không mua thêm license.</p></div></div>
-    <div class="wrow reveal"><div class="wn">02</div><div><h3>DSL là source-of-truth</h3><p>Review bằng Git như pull request thật, self-heal-as-diff, không XAML mờ đục.</p></div></div>
-    <div class="wrow reveal"><div class="wn">03</div><div><h3>Self-host, air-gap thật</h3><p>Single-tenant on-prem, LLM local không bị xén. Phục vụ finance, healthcare, government.</p></div></div>
-    <div class="wrow reveal"><div class="wn">04</div><div><h3>MCP mở, có governance</h3><p>Connector qua gateway: version pinning, scoped RBAC, DLP trên outbound.</p></div></div>
-    <div class="wrow reveal" style="grid-column:1 / -1"><div class="wn">05</div><div><h3>Giá phẳng, minh bạch</h3><p>Một giá theo edition, không metering theo bot hay theo lần chạy. Không consumption fog.</p></div></div>
+    <div class="wrow reveal"><div class="wn">01</div><div><h3>No per-robot fees</h3><p>Scale by adding low-cost machines on your own infrastructure, not by buying more licenses.</p></div></div>
+    <div class="wrow reveal"><div class="wn">02</div><div><h3>Clear, reviewable workflows</h3><p>Every workflow is saved as readable steps your team can review and approve, like a document.</p></div></div>
+    <div class="wrow reveal"><div class="wn">03</div><div><h3>Runs in your network</h3><p>Fully on your own servers, even offline. Ideal for finance, healthcare and government.</p></div></div>
+    <div class="wrow reveal"><div class="wn">04</div><div><h3>Secure, controlled connections</h3><p>Connect to your apps through a gateway with full access control and data protection.</p></div></div>
+    <div class="wrow reveal" style="grid-column:1 / -1"><div class="wn">05</div><div><h3>Simple, flat pricing</h3><p>One clear price. No charges per robot or per run, and no surprises.</p></div></div>
   </div>
 </div></section>
 
@@ -523,30 +523,30 @@
 <section id="security" class="sec-pad"><div class="wrap">
   <div class="gov">
     <div class="reveal">
-      <span class="eyebrow">Audit-first</span>
-      <h2 style="margin-top:16px; font-size:clamp(30px,3.4vw,44px)">Để Security, Compliance và Procurement gật đầu</h2>
+      <span class="eyebrow">Built for trust</span>
+      <h2 style="margin-top:16px; font-size:clamp(30px,3.4vw,44px)">Designed to satisfy Security, Compliance and Procurement</h2>
       <div class="gov-points">
-        <div class="gp"><i class="ph ph-seal-check"></i><div><b>Immutable audit</b><span>Append-only, SHA-256 hash-chained, truy ngược run tới version tới approver.</span></div></div>
-        <div class="gp"><i class="ph ph-users-three"></i><div><b>RBAC hai tầng + folder isolation</b><span>Org-level và scope-level, cô lập như multi-tenant trong tổ chức.</span></div></div>
-        <div class="gp"><i class="ph ph-fingerprint"></i><div><b>Identity federation</b><span>OIDC và SAML, tích hợp IdP doanh nghiệp.</span></div></div>
-        <div class="gp"><i class="ph ph-shield-checkered"></i><div><b>Risk-tier approval</b><span>Hành động rủi ro cao qua cổng duyệt, self-heal mặc định suggest-only.</span></div></div>
+        <div class="gp"><i class="ph ph-seal-check"></i><div><b>Tamper-proof audit trail</b><span>Every action is permanently recorded and linked. Trace any run all the way back to who approved it.</span></div></div>
+        <div class="gp"><i class="ph ph-users-three"></i><div><b>Role-based access</b><span>Control exactly who can see and do what, with clear separation between teams.</span></div></div>
+        <div class="gp"><i class="ph ph-fingerprint"></i><div><b>Single sign-on</b><span>Works with your existing company login, such as Microsoft or Okta.</span></div></div>
+        <div class="gp"><i class="ph ph-shield-checkered"></i><div><b>Approval for sensitive actions</b><span>High-risk steps require sign-off, and AI fixes only suggest by default.</span></div></div>
       </div>
       <div class="badges">
-        <span class="badge">SOC 2 CC7/CC8</span><span class="badge">EU AI Act</span><span class="badge">NIST AI RMF</span><span class="badge">ISO 42001</span><span class="badge">GDPR</span>
+        <span class="badge">SOC 2</span><span class="badge">EU AI Act</span><span class="badge">NIST AI RMF</span><span class="badge">ISO 42001</span><span class="badge">GDPR</span>
       </div>
     </div>
     <div class="chain reveal" id="chain">
-      <div class="ttl">immutable audit chain</div>
+      <div class="ttl">tamper-proof audit trail</div>
       <div class="blocks">
-        <div class="blk"><i class="ph ph-cube"></i><div class="h">gen</div></div>
+        <div class="blk"><i class="ph ph-cube"></i><div class="h">created</div></div>
         <i class="ph ph-link link-i"></i>
-        <div class="blk"><i class="ph ph-cube"></i><div class="h">approve</div></div>
+        <div class="blk"><i class="ph ph-cube"></i><div class="h">approved</div></div>
         <i class="ph ph-link link-i"></i>
         <div class="blk"><i class="ph ph-cube"></i><div class="h">run</div></div>
         <i class="ph ph-link link-i"></i>
-        <div class="blk"><i class="ph ph-cube"></i><div class="h">heal</div></div>
+        <div class="blk"><i class="ph ph-cube"></i><div class="h">repaired</div></div>
       </div>
-      <p style="color:var(--faint); font-size:13px; margin-top:22px; font-family:'JetBrains Mono',monospace">Mỗi block khóa mã hash của block trước. Sửa một bản ghi là phá vỡ cả chuỗi.</p>
+      <p style="color:var(--faint); font-size:13px; margin-top:22px; font-family:'JetBrains Mono',monospace">Each record is locked to the one before it. Change a single entry and the whole chain breaks — so tampering is obvious.</p>
     </div>
   </div>
 </div></section>
@@ -554,23 +554,23 @@
 <!-- ROI -->
 <section class="sec-pad" style="padding-top:0"><div class="wrap">
   <div class="sec-head reveal">
-    <h2>Chứng minh ROI trước khi scale</h2>
-    <p>ROI là tính năng hạng nhất. Champion đo giá trị bằng số liệu thật, không phải lời hứa.</p>
+    <h2>Prove the value before you scale</h2>
+    <p>See the results in real numbers, not promises. Your team measures the impact from week one.</p>
   </div>
   <div class="roi">
-    <div class="rcard reveal"><i class="ph ph-clock-countdown"></i><h3>Maintenance-hours-saved</h3><p>Số giờ bảo trì tiết kiệm nhờ self-heal.</p></div>
-    <div class="rcard reveal"><i class="ph ph-coins"></i><h3>License-savings</h3><p>Tiết kiệm khi bỏ thuế per-bot.</p></div>
-    <div class="rcard reveal"><i class="ph ph-trend-up"></i><h3>Success-rate</h3><p>Tỷ lệ step và workflow hoàn tất.</p></div>
-    <div class="rcard reveal"><i class="ph ph-path"></i><h3>Cost-per-run</h3><p>Chi phí mỗi lần chạy, minh bạch.</p></div>
+    <div class="rcard reveal"><i class="ph ph-clock-countdown"></i><h3>Maintenance time saved</h3><p>Hours your team no longer spends fixing automations.</p></div>
+    <div class="rcard reveal"><i class="ph ph-coins"></i><h3>License savings</h3><p>What you save by dropping per-robot fees.</p></div>
+    <div class="rcard reveal"><i class="ph ph-trend-up"></i><h3>Success rate</h3><p>How reliably your processes complete.</p></div>
+    <div class="rcard reveal"><i class="ph ph-path"></i><h3>Cost per run</h3><p>A clear, transparent cost for every process run.</p></div>
   </div>
 </div></section>
 
 <!-- CTA -->
 <section id="cta" class="sec-pad" style="padding-top:0"><div class="wrap">
   <div class="cta-band reveal">
-    <h2>Đặt lại bài toán tự động hóa</h2>
-    <p>Bắt đầu bằng một pilot thin-slice. Chọn một quy trình thật, đo maintenance-hours-saved và success-rate chỉ trong vài tuần.</p>
-    <a href="mailto:hello@amosflow.example" class="btn btn-primary" style="padding:15px 28px; font-size:16px"><i class="ph ph-calendar-check"></i>Đặt lịch demo</a>
+    <h2>Rethink how your business automates</h2>
+    <p>Start with a small pilot. Pick one real process and measure the time saved and the reliability in just a few weeks.</p>
+    <a href="mailto:hello@amosflow.example" class="btn btn-primary" style="padding:15px 28px; font-size:16px"><i class="ph ph-calendar-check"></i>Book a demo</a>
   </div>
 </div></section>
 
@@ -579,15 +579,15 @@
   <div class="foot">
     <div>
       <a href="#top" class="brand"><span class="dot"></span>AMOS FLOW</a>
-      <p class="tag">Nền tảng tự động hóa AI-native, self-hosted. Độ tin cậy của RPA, trí tuệ của AI, trên hạ tầng của bạn.</p>
+      <p class="tag">An AI-powered automation platform that runs on your own infrastructure. The reliability of rules, the intelligence of AI.</p>
     </div>
     <div class="foot-links">
-      <div class="foot-col"><h4>Sản phẩm</h4><a href="#features">Chức năng</a><a href="#how">Cách hoạt động</a><a href="#arch">Kiến trúc</a></div>
-      <div class="foot-col"><h4>Tin cậy</h4><a href="#security">Bảo mật</a><a href="#security">Governance</a><a href="#security">Compliance</a></div>
-      <div class="foot-col"><h4>Liên hệ</h4><a href="#cta">Đặt lịch demo</a><a href="mailto:hello@amosflow.example">Email</a></div>
+      <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="#arch">Platform</a></div>
+      <div class="foot-col"><h4>Trust</h4><a href="#security">Security</a><a href="#security">Governance</a><a href="#security">Compliance</a></div>
+      <div class="foot-col"><h4>Contact</h4><a href="#cta">Book a demo</a><a href="mailto:hello@amosflow.example">Email</a></div>
     </div>
   </div>
-  <div class="copyr"><span>2026 AMOS FLOW. Bản giới thiệu.</span><span class="mono">AI-native · self-hosted · hybrid automation</span></div>
+  <div class="copyr"><span>2026 AMOS FLOW. Introductory overview.</span><span class="mono">AI-powered · runs on your infrastructure · business automation</span></div>
 </div></footer>
 
 <script>
@@ -618,14 +618,14 @@
     cs.forEach(function(el){ io2.observe(el); });
   } else { cs.forEach(run); }
 
-  // self-heal demo loop
+  // self-repair demo loop
   var demo = document.getElementById('healDemo');
   if(demo && !reduce){
     var ccs = demo.querySelectorAll('.cc'), healed = document.getElementById('healed'), bl = document.getElementById('brokenLbl');
     function cycle(){
-      ccs.forEach(function(c){c.classList.remove('on');}); healed.classList.remove('on'); bl.textContent='selector gãy'; bl.style.color='var(--danger)';
+      ccs.forEach(function(c){c.classList.remove('on');}); healed.classList.remove('on'); bl.textContent='not found'; bl.style.color='var(--danger)';
       ccs.forEach(function(c,i){ setTimeout(function(){c.classList.add('on');}, 1200 + i*1100); });
-      setTimeout(function(){ healed.classList.add('on'); bl.textContent='đã định vị lại'; bl.style.color='var(--ok)'; }, 1200+ccs.length*1100+400);
+      setTimeout(function(){ healed.classList.add('on'); bl.textContent='relocated'; bl.style.color='var(--ok)'; }, 1200+ccs.length*1100+400);
     }
     cycle(); setInterval(cycle, 9000);
   }
