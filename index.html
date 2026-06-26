@@ -115,6 +115,46 @@
   .stat .lab{color:var(--muted); font-size:15px; margin-top:12px; max-width:24ch}
   .band-note{color:var(--faint); font-size:13px; padding:0 30px 40px}
 
+  /* ---------- hybrid hub ---------- */
+  .hub{display:grid; grid-template-columns:1fr minmax(220px,1.05fr) 1fr; gap:18px; align-items:stretch; margin-bottom:48px}
+  .hub-node{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:30px 26px; display:flex; flex-direction:column; justify-content:center; gap:8px; position:relative; overflow:hidden}
+  .hub-node.ag{background:var(--grad-soft); border-color:rgba(34,211,184,.30)}
+  .hub-node .ico{width:50px;height:50px;border-radius:13px; display:flex;align-items:center;justify-content:center; font-size:26px; color:var(--accent2); background:rgba(34,211,184,.10); margin-bottom:10px}
+  .hub-node h3{font-size:22px}
+  .hub-node .nt{color:var(--muted); font-size:14px}
+  .hub-mid{display:flex; flex-direction:column; justify-content:center; gap:18px; padding:6px 4px}
+  .hub-badge{align-self:center; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:12.5px; letter-spacing:.2em; color:#04111f; background:var(--grad); padding:9px 18px; border-radius:999px; box-shadow:0 10px 28px rgba(34,211,184,.32)}
+  .arrow{display:flex; flex-direction:column; gap:7px; align-items:center}
+  .arrow .alab{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--faint); letter-spacing:.03em; text-align:center}
+  .fline{position:relative; width:100%; height:2px; border-radius:2px; background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent); background-size:200% 100%; animation:flowx 2.4s linear infinite}
+  .fline i{position:absolute; top:50%; transform:translateY(-50%); font-size:17px; color:var(--accent2); background:var(--bg); border-radius:50%}
+  .fline.l i{left:-3px} .fline.r i{right:-3px}
+  @keyframes flowx{to{background-position:-200% 0}}
+
+  /* ---------- capability cards ---------- */
+  .caps{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+  .cap{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:24px 22px; transition:.3s var(--ease)}
+  .cap:hover{transform:translateY(-3px); border-color:var(--accent2)}
+  .cap .dir{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent2); letter-spacing:.04em; border:1px solid var(--border); border-radius:999px; padding:4px 11px; display:inline-block}
+  .cap .ico{width:44px;height:44px;border-radius:12px; display:flex;align-items:center;justify-content:center; font-size:23px; color:var(--accent2); background:rgba(34,211,184,.10); margin:16px 0 14px}
+  .cap h3{font-size:17px; margin-bottom:7px}
+  .cap p{font-size:13.5px; color:var(--muted)}
+
+  /* ---------- comparison ---------- */
+  .cmp{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:60px}
+  .cmp-col{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:30px 26px}
+  .cmp-col.hl{border-color:rgba(34,211,184,.42); background:var(--grad-soft); box-shadow:0 22px 56px rgba(0,0,0,.34)}
+  .cmp-h{margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--border)}
+  .cmp-h h3{font-size:21px}
+  .cmp-sub{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--faint); display:block; margin-top:6px; letter-spacing:.04em}
+  .cmp-col.hl .cmp-sub{color:var(--accent2)}
+  .cmp-list{display:flex; flex-direction:column; gap:14px}
+  .cmp-li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--muted)}
+  .cmp-li i{font-size:19px; margin-top:1px; flex-shrink:0}
+  .cmp-li.y{color:var(--text)} .cmp-li.y i{color:var(--ok)}
+  .cmp-li.n i{color:var(--faint)}
+  .cmp-li.p i{color:var(--warning)}
+
   /* ---------- pipeline ---------- */
   .pipe{position:relative; display:grid; grid-template-columns:repeat(6,1fr); gap:16px}
   .pipe::before{content:""; position:absolute; top:38px; left:7%; right:7%; height:2px; background:var(--border)}
@@ -245,13 +285,20 @@
     .bento{grid-template-columns:repeat(2,1fr); grid-auto-rows:auto}
     .c-wide,.c-mid,.c-sm{grid-column:span 1} .c-tall{grid-row:span 1} .cell{min-height:190px}
     .heal,.gov,.wedge{grid-template-columns:1fr; gap:34px}
+    .gov>*,.heal>*{min-width:0} .blk{min-width:0}
     .layer{grid-template-columns:1fr; gap:14px}
     .roi{grid-template-columns:repeat(2,1fr)}
+    .hub{grid-template-columns:1fr; gap:14px} .hub-mid{flex-direction:row; justify-content:center; gap:24px; flex-wrap:wrap}
+    .arrow{flex:1; min-width:130px}
+    .caps{grid-template-columns:repeat(2,1fr)}
+    .cmp{grid-template-columns:1fr}
   }
   @media(max-width:680px){
     .sec-pad{padding:72px 0} .wrap{padding:0 20px}
     .navlinks,.nav-right .btn-ghost{display:none} .hamburger{display:flex; align-items:center; justify-content:center}
     .pipe{grid-template-columns:repeat(2,1fr)} .bento,.roi,.stats{grid-template-columns:1fr}
+    .caps{grid-template-columns:1fr} .hub-mid{flex-direction:column}
+    .chain{padding:24px 16px} .blocks{gap:5px} .blk{padding:14px 5px} .blk .h{font-size:9px} .link-i{font-size:13px}
     .stat{border-right:none}
     .mobile-menu.open{display:flex}
   }
@@ -276,8 +323,9 @@
     <nav class="navbar">
       <a href="#top" class="brand"><span class="dot"></span>AMOS FLOW</a>
       <div class="navlinks">
-        <a href="#features">Features</a>
+        <a href="#hybrid">Approach</a>
         <a href="#how">How it works</a>
+        <a href="#features">Features</a>
         <a href="#arch">Platform</a>
         <a href="#security">Security</a>
       </div>
@@ -288,8 +336,9 @@
       </div>
     </nav>
     <div class="mobile-menu" id="mm">
-      <a href="#features">Features</a>
+      <a href="#hybrid">Approach</a>
       <a href="#how">How it works</a>
+      <a href="#features">Features</a>
       <a href="#arch">Platform</a>
       <a href="#security">Security</a>
       <a href="#cta">Book a demo</a>
@@ -364,6 +413,98 @@
     <div class="stat"><div class="num counter" data-target="60" data-suf="+">60<span class="u">+</span></div><div class="lab">business apps and systems connected</div></div>
   </div>
   <p class="band-note mono">Results vary by process and environment.</p>
+</div></section>
+
+<!-- HYBRID / APPROACH -->
+<section id="hybrid" class="sec-pad"><div class="wrap">
+  <div class="sec-head reveal">
+    <h2>Fixed workflows and AI agents, working as one</h2>
+    <p>Most platforms make you choose: rigid automation that is reliable but rigid, or AI agents that are flexible but unpredictable. AMOS runs both together, so each one covers the other's weakness.</p>
+  </div>
+
+  <div class="hub reveal">
+    <div class="hub-node wf">
+      <div class="ico"><i class="ph ph-flow-arrow"></i></div>
+      <h3>Fixed workflow</h3>
+      <p class="nt">Reliable, repeatable, and fully auditable. The dependable rails your business runs on.</p>
+    </div>
+    <div class="hub-mid" aria-hidden="true">
+      <div class="arrow">
+        <span class="alab">builds, runs, repairs</span>
+        <div class="fline l"><i class="ph-fill ph-caret-left"></i></div>
+      </div>
+      <span class="hub-badge">HYBRID</span>
+      <div class="arrow">
+        <div class="fline r"><i class="ph-fill ph-caret-right"></i></div>
+        <span class="alab">delegates the hard steps</span>
+      </div>
+    </div>
+    <div class="hub-node ag">
+      <div class="ico"><i class="ph ph-sparkle"></i></div>
+      <h3>AI agent</h3>
+      <p class="nt">Adaptive and context-aware. Handles change and ambiguity that fixed steps cannot.</p>
+    </div>
+  </div>
+
+  <div class="caps">
+    <div class="cap reveal">
+      <span class="dir">agent → workflow</span>
+      <div class="ico"><i class="ph ph-magic-wand"></i></div>
+      <h3>Builds workflows</h3>
+      <p>Describe a process and the agent generates a ready-to-run workflow for you to approve.</p>
+    </div>
+    <div class="cap reveal">
+      <span class="dir">agent → workflow</span>
+      <div class="ico"><i class="ph ph-play-circle"></i></div>
+      <h3>Triggers and monitors</h3>
+      <p>The agent starts workflows, watches every run, and flags problems as they happen.</p>
+    </div>
+    <div class="cap reveal">
+      <span class="dir">agent → workflow</span>
+      <div class="ico"><i class="ph ph-heartbeat"></i></div>
+      <h3>Repairs failures</h3>
+      <p>When a run breaks, the agent diagnoses the cause and proposes a fix for approval.</p>
+    </div>
+    <div class="cap reveal">
+      <span class="dir">workflow → agent</span>
+      <div class="ico"><i class="ph ph-puzzle-piece"></i></div>
+      <h3>Handles unstable steps</h3>
+      <p>Workflows hand off unpredictable steps to the agent, then continue on reliable rails.</p>
+    </div>
+  </div>
+
+  <div class="cmp">
+    <div class="cmp-col reveal">
+      <div class="cmp-h"><h3>Fixed workflows only</h3><span class="cmp-sub">Legacy RPA</span></div>
+      <div class="cmp-list">
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Reliable and repeatable</div>
+        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Stops working when apps change</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Fully auditable</div>
+        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Cannot handle ambiguity</div>
+        <div class="cmp-li p"><i class="ph ph-minus-circle"></i>Cost climbs with every robot</div>
+      </div>
+    </div>
+    <div class="cmp-col reveal">
+      <div class="cmp-h"><h3>AI agents only</h3><span class="cmp-sub">Most AI tools today</span></div>
+      <div class="cmp-list">
+        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Results can be unpredictable</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Adapts when apps change</div>
+        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Hard to audit and explain</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Handles ambiguity well</div>
+        <div class="cmp-li p"><i class="ph ph-minus-circle"></i>Running costs are hard to predict</div>
+      </div>
+    </div>
+    <div class="cmp-col hl reveal">
+      <div class="cmp-h"><h3>AMOS hybrid</h3><span class="cmp-sub">The best of both</span></div>
+      <div class="cmp-list">
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Reliable and repeatable</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Adapts and repairs itself</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Fully auditable</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Handles ambiguity safely</div>
+        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Predictable, flat pricing</div>
+      </div>
+    </div>
+  </div>
 </div></section>
 
 <!-- HOW IT WORKS -->
