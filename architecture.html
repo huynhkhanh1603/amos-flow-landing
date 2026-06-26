@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMOS FLOW · System Architecture</title>
+<meta name="description" content="The complete system architecture of AMOS FLOW: control-plane and stateless-runner split, durable execution on Temporal, hybrid deterministic core with opt-in agents, air-gap-first, fully auditable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root{
+    --bg:#080E1A; --bg2:#0B1322; --surface:#0F1A2E; --surface-hi:#152339;
+    --border:#1E2F4D; --border-soft:#172642;
+    --text:#EAF0FB; --muted:#93A4BE; --faint:#5E7491;
+    --accent:#1E8FD6; --accent2:#1FB85C; --pop:#F27023;
+    --grad:linear-gradient(135deg,#1E8FD6 0%,#1FB85C 100%);
+    --grad-soft:linear-gradient(135deg,rgba(30,143,214,.16),rgba(31,184,92,.10));
+    --danger:#F97362; --ok:#34D399; --warning:#F8B24A;
+    --r-card:16px; --r-sm:10px; --maxw:1240px;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg); color:var(--text); font-family:'Sora',system-ui,sans-serif; font-weight:300; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden}
+  ::selection{background:rgba(30,143,214,.32)}
+  a{color:inherit; text-decoration:none}
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; font-weight:600; line-height:1.08; letter-spacing:-.02em}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint)}
+  .accent-text{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+  section{position:relative}
+  .sec-pad{padding:88px 0}
+
+  .bgfield{position:fixed; inset:0; z-index:-2; background:
+     radial-gradient(900px 500px at 80% -10%, rgba(30,143,214,.15), transparent 60%),
+     radial-gradient(720px 480px at 4% 8%, rgba(31,184,92,.08), transparent 60%), var(--bg)}
+  .grid-overlay{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.45;
+    background-image:linear-gradient(var(--border-soft) 1px,transparent 1px),linear-gradient(90deg,var(--border-soft) 1px,transparent 1px);
+    background-size:64px 64px; mask-image:radial-gradient(circle at 50% 20%, #000 0%, transparent 76%);
+    -webkit-mask-image:radial-gradient(circle at 50% 20%, #000 0%, transparent 76%)}
+
+  /* nav */
+  header.nav{position:sticky; top:14px; z-index:50}
+  .navbar{display:flex; align-items:center; justify-content:space-between; gap:18px; height:62px; padding:0 14px 0 20px; border:1px solid var(--border); border-radius:999px; background:rgba(15,26,46,.74); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+  .brand{display:flex; align-items:center; gap:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px}
+  .brand .mark{width:28px;height:28px;border-radius:8px;display:block;box-shadow:0 0 18px rgba(31,184,92,.40)}
+  .navlinks{display:flex; gap:26px; font-size:14.5px; color:var(--muted); font-weight:400}
+  .navlinks a{transition:color .2s} .navlinks a:hover{color:var(--text)}
+  .nav-right{display:flex; align-items:center; gap:12px}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-family:'Space Grotesk',sans-serif; font-weight:500; border-radius:999px; cursor:pointer; transition:transform .18s var(--ease), box-shadow .25s; border:none; font-size:14.5px}
+  .btn:active{transform:translateY(1px) scale(.99)}
+  .btn-primary{background:var(--grad); color:#04111f; padding:11px 20px; box-shadow:0 8px 26px rgba(30,143,214,.30)}
+  .btn-ghost{background:transparent; color:var(--text); padding:11px 18px; border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--accent)}
+  .hamburger{display:none; background:none; border:1px solid var(--border); color:var(--text); width:42px;height:42px;border-radius:12px; font-size:20px; cursor:pointer}
+  .mobile-menu{display:none; flex-direction:column; gap:4px; margin-top:10px; padding:14px; border:1px solid var(--border); border-radius:18px; background:rgba(15,26,46,.94); backdrop-filter:blur(16px)}
+  .mobile-menu a{padding:11px 13px; border-radius:10px; color:var(--muted)} .mobile-menu a:hover{background:var(--surface); color:var(--text)}
+
+  /* hero */
+  .ahero{padding:60px 0 30px}
+  .back{display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--faint); margin-bottom:22px; transition:.2s}
+  .back:hover{color:var(--accent2)}
+  .ahero h1{font-size:clamp(38px,5vw,68px); font-weight:700; max-width:18ch}
+  .ahero p{font-size:18px; color:var(--muted); max-width:60ch; margin-top:22px}
+  .hpills{display:flex; gap:10px; flex-wrap:wrap; margin-top:28px}
+  .hpill{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); border:1px solid var(--border); border-radius:999px; padding:7px 14px; background:rgba(15,26,46,.5)}
+  .hpill i{color:var(--accent2); margin-right:6px}
+
+  /* section head */
+  .shead{max-width:66ch; margin-bottom:46px}
+  .shead h2{font-size:clamp(28px,3.4vw,42px)}
+  .shead p{color:var(--muted); font-size:17px; margin-top:16px; max-width:62ch}
+  .snum{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent2); letter-spacing:.1em}
+
+  /* reveal */
+  .js .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .reveal.in{opacity:1; transform:none}
+
+  /* generic card grid */
+  .cgrid{display:grid; gap:16px}
+  .c2{grid-template-columns:repeat(2,1fr)} .c3{grid-template-columns:repeat(3,1fr)} .c4{grid-template-columns:repeat(4,1fr)}
+  .card{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:24px; transition:.3s var(--ease)}
+  .card:hover{transform:translateY(-3px); border-color:var(--border-soft); box-shadow:0 16px 36px rgba(0,0,0,.3)}
+  .card .ico{width:44px;height:44px;border-radius:11px; display:flex;align-items:center;justify-content:center; font-size:23px; color:var(--accent2); background:rgba(31,184,92,.10); margin-bottom:15px}
+  .card h3{font-size:18px; margin-bottom:8px}
+  .card p{font-size:14px; color:var(--muted)}
+  .card .num{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:26px; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:6px}
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
+  .chip{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent2); border:1px solid var(--border); border-radius:999px; padding:4px 10px; background:rgba(31,184,92,.05)}
+  .chip.b{color:var(--accent); background:rgba(30,143,214,.05)}
+  .chip.o{color:var(--pop); background:rgba(242,112,35,.05)}
+
+  /* trust-boundary context */
+  .ctx{border:1px dashed rgba(30,143,214,.45); border-radius:22px; padding:26px; position:relative; background:rgba(13,19,34,.5)}
+  .ctx-tag{position:absolute; top:-11px; left:24px; background:var(--bg); padding:0 12px; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--accent); letter-spacing:.06em}
+  .ctx-grid{display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:18px; align-items:stretch}
+  .ctx-col{border:1px solid var(--border); border-radius:14px; background:var(--surface); padding:20px}
+  .ctx-col h4{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--faint); font-family:'JetBrains Mono',monospace; font-weight:400; margin-bottom:14px}
+  .ctx-row{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--muted); padding:7px 0}
+  .ctx-row i{color:var(--accent2); font-size:17px; margin-top:1px; flex-shrink:0}
+  .ctx-row.gate i{color:var(--warning)}
+  .ctx-core{border:1px solid rgba(31,184,92,.4); background:var(--grad-soft); display:flex; flex-direction:column; justify-content:center; text-align:center; gap:8px}
+  .ctx-core .lg{width:52px;height:52px;border-radius:13px;background:var(--grad);color:#04111f;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 6px}
+  .ctx-core b{font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600}
+  .ctx-core span{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--muted)}
+  .ctx-note{margin-top:16px; font-size:13.5px; color:var(--faint)}
+  .ctx-note b{color:var(--muted); font-weight:500}
+
+  /* layered stack */
+  .stack-d{display:flex; flex-direction:column; gap:12px; position:relative}
+  .band{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:20px 22px; position:relative; overflow:hidden}
+  .band.bb{border-color:rgba(31,184,92,.34); background:var(--grad-soft)}
+  .band.ext{border-style:dashed; border-color:rgba(30,143,214,.4); background:rgba(13,19,34,.5)}
+  .band-h{display:flex; align-items:center; gap:11px; margin-bottom:14px}
+  .band-h i{font-size:22px; color:var(--accent2)}
+  .band-h b{font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600}
+  .band-h span{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--faint); margin-left:auto; letter-spacing:.04em}
+  .units{display:flex; flex-wrap:wrap; gap:9px}
+  .unit{border:1px solid var(--border); border-radius:10px; background:var(--bg2); padding:10px 13px; font-size:13px}
+  .unit b{font-weight:500; display:block} .unit span{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--faint)}
+  .band.bb .unit{background:rgba(8,14,26,.4)}
+  .bconn{height:22px; position:relative}
+  .bconn::before{content:""; position:absolute; left:50%; top:0; bottom:0; width:2px; transform:translateX(-50%); background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .bconn::after{content:""; position:absolute; left:50%; top:-2px; width:8px;height:8px;border-radius:50%; transform:translateX(-50%); background:var(--accent2); box-shadow:0 0 12px var(--accent2); animation:flow 3.2s var(--ease) infinite}
+  @keyframes flow{0%{top:-2px;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:20px;opacity:0}}
+
+  /* flow rows */
+  .flow-row{display:flex; align-items:stretch; gap:6px; flex-wrap:wrap; margin-bottom:14px}
+  .fnode{flex:1; min-width:120px; border:1px solid var(--border); border-radius:11px; background:var(--surface); padding:14px 13px; text-align:center; position:relative}
+  .fnode.key{background:var(--grad-soft); border-color:rgba(31,184,92,.4)}
+  .fnode i{font-size:21px; color:var(--accent2)} .fnode.key i{color:var(--pop)}
+  .fnode b{display:block; font-size:13.5px; margin-top:7px; font-weight:500}
+  .fnode span{font-size:11.5px; color:var(--faint)}
+  .flow-lab{display:flex; align-items:center; gap:9px; margin-bottom:12px}
+  .flow-lab .fi{width:34px;height:34px;border-radius:9px;background:rgba(31,184,92,.12);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:18px}
+  .flow-lab b{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600}
+
+  /* tables */
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); -webkit-overflow-scrolling:touch}
+  .tbl{width:100%; min-width:680px; border-collapse:collapse; font-size:14px}
+  .tbl th,.tbl td{padding:14px 16px; text-align:left; vertical-align:top}
+  .tbl thead th{font-family:'Space Grotesk',sans-serif; font-size:14.5px; font-weight:600; color:var(--text); border-bottom:1px solid var(--border)}
+  .tbl tbody tr+tr th,.tbl tbody tr+tr td{border-top:1px solid var(--border-soft)}
+  .tbl tbody th{font-weight:500; color:var(--text); font-family:'Sora',sans-serif; font-size:14px}
+  .tbl td{color:var(--muted)}
+  .tbl td .mono,.tbl td .chip{font-size:11.5px}
+  .tbl th:first-child{position:sticky; left:0; background:var(--surface); z-index:2; min-width:180px}
+  .tbl thead th:first-child{z-index:3}
+  .tag-ok{color:var(--accent2)} .tag-b{color:var(--accent)} .tag-o{color:var(--pop)}
+
+  /* adr / risk lists */
+  .adrlist{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+  .adr{display:flex; gap:14px; border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:18px 20px}
+  .adr .aid{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent2); flex-shrink:0; padding-top:2px; min-width:54px}
+  .adr p{font-size:13.5px; color:var(--muted)} .adr b{color:var(--text); font-weight:500}
+  .risk{border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:20px; position:relative}
+  .risk .rh{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  .risk .rh i{color:var(--warning); font-size:20px}
+  .risk .rh b{font-size:15px; font-weight:600; font-family:'Space Grotesk',sans-serif}
+  .risk p{font-size:13.5px; color:var(--muted)}
+  .risk .mit{margin-top:10px; font-size:13px; color:var(--text)}
+  .risk .mit b{color:var(--accent2); font-weight:500}
+
+  /* cta + footer */
+  .cta-band{border:1px solid var(--border); border-radius:26px; background:var(--grad-soft); padding:60px 36px; text-align:center; position:relative; overflow:hidden}
+  .cta-band::before{content:""; position:absolute; inset:0; background:radial-gradient(600px 280px at 50% 0%, rgba(31,184,92,.16), transparent 70%)}
+  .cta-band h2{font-size:clamp(28px,3.6vw,44px); position:relative}
+  .cta-band p{color:var(--muted); font-size:17px; max-width:52ch; margin:18px auto 30px; position:relative}
+  .cta-band .btn{position:relative}
+  footer{border-top:1px solid var(--border); padding:50px 0 38px; margin-top:30px}
+  .foot{display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; align-items:flex-start}
+  .foot .tag{color:var(--muted); font-size:14.5px; max-width:34ch; margin-top:13px}
+  .fpt{display:flex; align-items:center; gap:13px; margin-top:22px}
+  .fpt-by{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--faint)}
+  .fpt-logo{height:32px; width:auto; display:block}
+  .foot-links{display:flex; gap:44px; flex-wrap:wrap}
+  .foot-col h4{font-size:13px; text-transform:uppercase; letter-spacing:.1em; color:var(--faint); margin-bottom:15px; font-family:'JetBrains Mono',monospace; font-weight:400}
+  .foot-col a{display:block; color:var(--muted); font-size:14.5px; margin-bottom:10px; transition:.2s} .foot-col a:hover{color:var(--text)}
+  .copyr{margin-top:42px; padding-top:22px; border-top:1px solid var(--border); color:var(--faint); font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px}
+
+  @media(max-width:980px){
+    .ctx-grid{grid-template-columns:1fr} .c4{grid-template-columns:repeat(2,1fr)} .c3{grid-template-columns:repeat(2,1fr)}
+    .adrlist{grid-template-columns:1fr}
+  }
+  @media(max-width:680px){
+    .sec-pad{padding:64px 0} .wrap{padding:0 20px}
+    .navlinks,.nav-right .btn-ghost{display:none} .hamburger{display:flex; align-items:center; justify-content:center}
+    .c2,.c3,.c4{grid-template-columns:1fr}
+    .mobile-menu.open{display:flex}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important}
+    .reveal{opacity:1; transform:none} html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="bgfield"></div>
+<div class="grid-overlay"></div>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap">
+    <nav class="navbar">
+      <a href="index.html" class="brand"><svg class="mark" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="amg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1E8FD6"/><stop offset="1" stop-color="#1FB85C"/></linearGradient></defs><rect width="36" height="36" rx="9" fill="url(#amg)"/><path d="M8 12.5 C 16 12.5, 17 18, 23 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M8 23.5 C 16 23.5, 17 18, 23 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".82"/><circle cx="25.4" cy="18" r="3.4" fill="#F27023"/></svg>AMOS FLOW</a>
+      <div class="navlinks">
+        <a href="index.html">Overview</a>
+        <a href="#principles">Principles</a>
+        <a href="#components">Components</a>
+        <a href="#data">Data</a>
+        <a href="#security">Security</a>
+        <a href="#stack">Stack</a>
+      </div>
+      <div class="nav-right">
+        <a href="index.html#cta" class="btn btn-ghost">Book a demo</a>
+        <button class="hamburger" id="hb" aria-label="Open menu"><i class="ph ph-list"></i></button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mm">
+      <a href="index.html">Overview</a>
+      <a href="#principles">Principles</a>
+      <a href="#context">System context</a>
+      <a href="#layers">Layers</a>
+      <a href="#components">Components</a>
+      <a href="#runtime">Runtime flows</a>
+      <a href="#data">Data</a>
+      <a href="#deploy">Deployment</a>
+      <a href="#security">Security</a>
+      <a href="#stack">Tech stack</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="ahero"><div class="wrap">
+  <a href="index.html" class="back"><i class="ph ph-arrow-left"></i>Back to overview</a>
+  <span class="eyebrow">System architecture</span>
+  <h1 style="margin-top:14px">The complete architecture behind <span class="accent-text">AMOS FLOW</span></h1>
+  <p>A self-hosted, single-tenant, air-gap-first automation platform. A deterministic core you can audit, an opt-in AI layer you can govern, and a durable execution backbone that never loses a run. This page covers the whole system, end to end.</p>
+  <div class="hpills">
+    <span class="hpill"><i class="ph-fill ph-shield-check"></i>Single-tenant, on your infrastructure</span>
+    <span class="hpill"><i class="ph-fill ph-lock-key"></i>Air-gap-first, zero phone-home</span>
+    <span class="hpill"><i class="ph-fill ph-arrows-clockwise"></i>Durable execution on Temporal</span>
+    <span class="hpill"><i class="ph-fill ph-seal-check"></i>Hash-chained audit of every action</span>
+  </div>
+</div></section>
+
+<!-- PRINCIPLES -->
+<section id="principles" class="sec-pad"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">01 / Principles</span>
+    <h2 style="margin-top:10px">Six architectural choices that fit together</h2>
+    <p>Each principle solves a specific enterprise constraint. Together they let AMOS scale without per-bot fees, run fully offline, and stay auditable while still using AI where it adds value.</p>
+  </div>
+  <div class="cgrid c3">
+    <div class="card reveal"><div class="ico"><i class="ph ph-stack"></i></div><h3>Control-plane / stateless-runner split</h3><p>A stateful "brain" (orchestrator, durable store, vault, gateway) and stateless worker hosts that pull immutable, versioned workflow artifacts. Delete or recreate a runner without losing a run.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-arrows-clockwise"></i></div><h3>Durable-execution backbone</h3><p>Every run is a Temporal workflow execution with an append-only event history, deterministic replay and idempotency caching. Partial-completion and runner crashes become recoverable events, never repeated side effects.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-shield-checkered"></i></div><h3>Hybrid deterministic core, opt-in agents</h3><p>Orchestration is a declarative, replayable graph (closed-vocabulary JSON DSL). All non-determinism (LLM calls, agentic reasoning) is locked inside typed steps. AI is invited in only where it helps.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-broadcast"></i></div><h3>Event-driven backbone</h3><p>An internal event bus (NATS JetStream, CloudEvents) decouples trigger ingestion, observability fan-out and outbound integration from the synchronous execution path.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-git-branch"></i></div><h3>Config-as-Code + GitOps</h3><p>Workflows, agent definitions, config bundles, triggers and model definitions are versioned Git artifacts and the single source of truth. Every change, including a self-heal fix, is reviewable like a pull request.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-lock-key"></i></div><h3>Air-gap-first, zero phone-home</h3><p>No outbound telemetry by default. Bring-your-own LLM only (no bundled weights). Install, upgrade and patch through signed offline bundles and a private registry mirror.</p></div>
+  </div>
+</div></section>
+
+<!-- SYSTEM CONTEXT -->
+<section id="context" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">02 / System context</span>
+    <h2 style="margin-top:10px">One trust boundary, three ways out</h2>
+    <p>The whole system sits inside the customer's single-tenant perimeter. People act through a single surface, the Operator Console. Only three traffic types are allowed to cross the boundary.</p>
+  </div>
+  <div class="ctx reveal">
+    <span class="ctx-tag">CUSTOMER TRUST BOUNDARY · single-tenant · air-gap-capable</span>
+    <div class="ctx-grid">
+      <div class="ctx-col">
+        <h4>Actors (IdP-authed)</h4>
+        <div class="ctx-row"><i class="ph ph-user-focus"></i>Business Analyst, authors workflows from SOPs and chat</div>
+        <div class="ctx-row"><i class="ph ph-monitor"></i>Operator, runs and watches, handles exceptions</div>
+        <div class="ctx-row"><i class="ph ph-gear"></i>Administrator, install, RBAC, fleet, upgrades</div>
+        <div class="ctx-row"><i class="ph ph-check-square"></i>Approver, signs off HITL and risk-tier gates</div>
+        <div class="ctx-row"><i class="ph ph-magnifying-glass"></i>Auditor, reads the hash-chained trail</div>
+        <div class="ctx-row"><i class="ph ph-plugs"></i>Service accounts, REST /api/v1 (OAuth2, mTLS)</div>
+      </div>
+      <div class="ctx-col ctx-core">
+        <div class="lg"><i class="ph ph-cpu"></i></div>
+        <b>AMOS FLOW</b>
+        <span>AI-native automation platform<br>self-hosted · single-tenant</span>
+      </div>
+      <div class="ctx-col">
+        <h4>External systems</h4>
+        <div class="ctx-row"><i class="ph ph-sparkle"></i>BYO LLM endpoint (vLLM, OpenAI-compatible)</div>
+        <div class="ctx-row"><i class="ph ph-fingerprint"></i>Identity Provider (SAML/OIDC + SCIM)</div>
+        <div class="ctx-row"><i class="ph ph-browsers"></i>Target apps (web, Windows desktop, REST)</div>
+        <div class="ctx-row"><i class="ph ph-vault"></i>Customer Vault / KMS / HSM</div>
+        <div class="ctx-row gate"><i class="ph ph-warning"></i>ITSM, egress-gated (off in air-gap)</div>
+        <div class="ctx-row gate"><i class="ph ph-warning"></i>SIEM export, egress-gated</div>
+      </div>
+    </div>
+    <p class="ctx-note"><b>Allowed egress:</b> calling the BYO LLM, federating with the IdP, and acting on target apps. Webhook-OUT to ITSM and SIEM export are egress-gated and off by default in air-gap. The IdP can validate tokens offline through cached JWKS.</p>
+  </div>
+</div></section>
+
+<!-- LAYERS -->
+<section id="layers" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">03 / Containers</span>
+    <h2 style="margin-top:10px">The system, layer by layer</h2>
+    <p>From authored source of truth, down through the control plane and durable backbone, out to a stateless runner fleet that touches your target systems outbound-only.</p>
+  </div>
+  <div class="stack-d reveal">
+    <div class="band">
+      <div class="band-h"><i class="ph ph-git-branch"></i><b>Authoring</b><span>Config-as-Code + GitOps</span></div>
+      <div class="units">
+        <div class="unit"><b>Git source of truth</b><span>DSL · config · agents · triggers · models</span></div>
+        <div class="unit"><b>AI Authoring pipeline</b><span>comprehend, clarify, author, self-test, present</span></div>
+        <div class="unit"><b>AI-Quality promotion gate</b><span>v2 ≥ v1 else block, signed cert</span></div>
+      </div>
+    </div>
+    <div class="bconn"></div>
+    <div class="band">
+      <div class="band-h"><i class="ph ph-squares-four"></i><b>Control plane</b><span>single-tenant · HA ≥3 node · air-gap-first</span></div>
+      <div class="units">
+        <div class="unit"><b>Platform API / Orchestrator</b><span>REST /api/v1, RBAC+ABAC</span></div>
+        <div class="unit"><b>Config service</b><span>layered → Effective Config (hash-pinned)</span></div>
+        <div class="unit"><b>Orchestrator Agent</b><span>fleet supervision, self-heal</span></div>
+        <div class="unit"><b>MCP / Skill Gateway</b><span>scope-RBAC, version-pin, DLP</span></div>
+        <div class="unit"><b>Credential Vault</b><span>envelope encryption, JIT</span></div>
+        <div class="unit"><b>Governance</b><span>folder isolation, hash-chained audit</span></div>
+        <div class="unit"><b>Observability</b><span>OTel, OpenSearch, VictoriaMetrics, Langfuse</span></div>
+        <div class="unit"><b>Trigger subsystem</b><span>cron, webhook, manual, deferrable</span></div>
+        <div class="unit"><b>Event bus</b><span>NATS JetStream, CloudEvents</span></div>
+      </div>
+    </div>
+    <div class="bconn"></div>
+    <div class="band bb">
+      <div class="band-h"><i class="ph ph-arrows-clockwise"></i><b>Durable execution backbone</b><span>Temporal · single source of truth for state</span></div>
+      <div class="units">
+        <div class="unit"><b>Temporal cluster</b><span>event history, replay, idempotency</span></div>
+        <div class="unit"><b>Workflow-Agent workers</b><span>DSL interpreter, not codegen</span></div>
+        <div class="unit"><b>Self-heal engine</b><span>detect → diagnose → recover → write-back</span></div>
+      </div>
+    </div>
+    <div class="bconn"></div>
+    <div class="band">
+      <div class="band-h"><i class="ph ph-hard-drives"></i><b>Stateless runner fleet</b><span>two-class · outbound-only · pull model</span></div>
+      <div class="units">
+        <div class="unit"><b>Windows desktop runner</b><span>persistent interactive session, FlaUI</span></div>
+        <div class="unit"><b>Headless runner</b><span>ephemeral, gVisor sandbox, Playwright</span></div>
+        <div class="unit"><b>Document-AI GPU runner</b><span>OCR, layout, table extraction</span></div>
+      </div>
+    </div>
+    <div class="bconn"></div>
+    <div class="band ext">
+      <div class="band-h"><i class="ph ph-globe-hemisphere-west"></i><b>External, customer-owned</b><span>across the trust boundary</span></div>
+      <div class="units">
+        <div class="unit"><b>BYO LLM (vLLM)</b><span>no bundled weights, offline</span></div>
+        <div class="unit"><b>Target systems</b><span>web · Windows GUI · API · documents</span></div>
+        <div class="unit"><b>Identity Provider</b><span>SAML/OIDC + SCIM</span></div>
+        <div class="unit"><b>Customer Vault / KMS</b><span>BYO-vault facade</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- COMPONENTS -->
+<section id="components" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">04 / Components</span>
+    <h2 style="margin-top:10px">Every logical component, grouped by layer</h2>
+    <p>Each component has a clear responsibility, a typed interface, and an open-source technology behind it. Nothing is a black box.</p>
+  </div>
+
+  <div class="flow-lab reveal"><span class="fi" style="background:rgba(30,143,214,.12);color:var(--accent)"><i class="ph ph-squares-four"></i></span><b>Control plane</b></div>
+  <div class="cgrid c2" style="margin-bottom:34px">
+    <div class="card reveal"><h3>Platform API / Orchestrator</h3><p>One unified REST API across every pillar, with RBAC + ABAC and folder isolation. Starts workflow executions, dispatches the fleet, runs the self-heal loop.</p><div class="chips"><span class="chip b">Go</span><span class="chip b">OpenAPI 3.1</span><span class="chip b">Keycloak</span></div></div>
+    <div class="card reveal"><h3>Config resolver (Effective Config)</h3><p>At dispatch, deep-merges layered config (base → environment → trigger) into one immutable, content-hashed snapshot pinned to the run. Fail-closed on missing bindings.</p><div class="chips"><span class="chip b">Go</span><span class="chip b">Git</span><span class="chip">CEL</span></div></div>
+  </div>
+
+  <div class="flow-lab reveal"><span class="fi"><i class="ph ph-arrows-clockwise"></i></span><b>Execution</b></div>
+  <div class="cgrid c3" style="margin-bottom:34px">
+    <div class="card reveal"><h3>Interpreter workflow</h3><p>A deterministic Temporal workflow that reads the DSL as input and dispatches each node as an activity. Change the DSL and it runs at once, no rebuild.</p><div class="chips"><span class="chip">Temporal</span><span class="chip">DSL JSON</span></div></div>
+    <div class="card reveal"><h3>Workflow-Agent runtime</h3><p>Per-run guardrails: iteration and token budgets, tool allowlists, mandatory human checkpoints, autonomy level. Verifies tool receipts so an agent cannot fake success.</p><div class="chips"><span class="chip">Temporal</span><span class="chip">validator</span></div></div>
+    <div class="card reveal"><h3>Activity workers</h3><p>Run every side-effect step and every LLM call as a Temporal activity with its own retry policy and idempotency-keyed result caching.</p><div class="chips"><span class="chip">Temporal</span><span class="chip">lease fencing</span></div></div>
+    <div class="card reveal"><h3>Self-heal engine</h3><p>A closed loop: detect, diagnose, recover, validate, decide, write back. Multi-strategy recovery from cheap to costly, fixes written back as a reviewable DSL diff.</p><div class="chips"><span class="chip o">UI-TARS vision</span><span class="chip">Temporal patching</span></div></div>
+    <div class="card reveal"><h3>Agentic-step harness</h3><p>Opt-in agentic step: a Pydantic AI agent running inside an activity, returning a typed result. The rest of the run stays deterministic and replay-safe.</p><div class="chips"><span class="chip">Pydantic AI</span><span class="chip">MCP SDK</span></div></div>
+    <div class="card reveal"><h3>Work-queue manager</h3><p>Durable transactional work queue with retry, dead-letter, priority and infinite pause-for-approval at zero idle runner cost.</p><div class="chips"><span class="chip">Temporal</span><span class="chip">NATS</span></div></div>
+  </div>
+
+  <div class="flow-lab reveal"><span class="fi"><i class="ph ph-hard-drives"></i></span><b>Runner fleet</b></div>
+  <div class="cgrid c3" style="margin-bottom:34px">
+    <div class="card reveal"><h3>Runner agent (outbound-only)</h3><p>Enrolls with a one-time token, holds an mTLS identity, heartbeats capabilities, pulls leased jobs. Opens no inbound port into the customer network.</p><div class="chips"><span class="chip">mTLS</span><span class="chip">WebSocket</span></div></div>
+    <div class="card reveal"><h3>Windows interactive session</h3><p>Manages a real logged-in desktop session for legacy GUI automation, with auto-login from the vault and a pinned display resolution.</p><div class="chips"><span class="chip">FlaUI</span><span class="chip">UIAutomation</span></div></div>
+    <div class="card reveal"><h3>Headless gVisor runner</h3><p>Browser, API, file and DB work in a clean sandbox per session, autoscaling to zero. AI-generated code runs inside gVisor or a Firecracker microVM.</p><div class="chips"><span class="chip">Playwright</span><span class="chip">gVisor</span></div></div>
+    <div class="card reveal"><h3>Capability x zone dispatcher</h3><p>Matches required capability and identity to an eligible runner pool with load balance and failover. Fails fast and closed when no zone-matched runner exists.</p><div class="chips"><span class="chip">pool targeting</span></div></div>
+    <div class="card reveal"><h3>Document-AI GPU runner</h3><p>An IDP pipeline (OCR, layout, table, post-process) on dedicated GPU runners, with a pluggable engine and confidence-thresholded human review.</p><div class="chips"><span class="chip">PaddleOCR</span><span class="chip">Docling</span></div></div>
+  </div>
+
+  <div class="flow-lab reveal"><span class="fi" style="background:rgba(242,112,35,.12);color:var(--pop)"><i class="ph ph-sparkle"></i></span><b>AI layer (BYO, govern and gate, never host or train)</b></div>
+  <div class="cgrid c2" style="margin-bottom:34px">
+    <div class="card reveal"><h3>Authoring pipeline</h3><p>A durable five-stage workflow: comprehend to an intermediate form, clarify, author DSL, self-test with a separate grader, present with a reliability report, then a mandatory human gate.</p><div class="chips"><span class="chip">Pydantic AI</span><span class="chip">XGrammar</span></div></div>
+    <div class="card reveal"><h3>AI-Quality gate-runner</h3><p>Runs candidate v2 and incumbent v1 on the same golden dataset on your own LLM, with dual grounding. Verdict passes only if v2 is at least v1 on every gated metric, else it blocks.</p><div class="chips"><span class="chip">promptfoo</span><span class="chip">HHEM-2.1</span><span class="chip">cosign</span></div></div>
+    <div class="card reveal"><h3>LLM provider gateway</h3><p>One abstraction so authoring, self-heal and agentic steps run against cloud or self-hosted vLLM unchanged. Air-gap loads models fully local with pinned versions.</p><div class="chips"><span class="chip">vLLM</span><span class="chip">XGrammar</span></div></div>
+    <div class="card reveal"><h3>Example library / retriever</h3><p>A per-tenant, versioned library of SOP-to-IR-to-DSL triples, reused as golden datasets for the gate and regression fixtures for self-test. Strictly tenant-scoped.</p><div class="chips"><span class="chip">embedding kNN</span></div></div>
+  </div>
+
+  <div class="flow-lab reveal"><span class="fi"><i class="ph ph-users-three"></i></span><b>Human and UX</b></div>
+  <div class="cgrid c3" style="margin-bottom:34px">
+    <div class="card reveal"><h3>Operator Console</h3><p>The single human surface: authoring chat, a deterministic read-only diagram, fleet and run monitoring, and the approval inbox. The only place approvals complete.</p><div class="chips"><span class="chip">assistant-ui</span><span class="chip">React Flow</span></div></div>
+    <div class="card reveal"><h3>Human-task service</h3><p>One typed node for approval, form and document-validation, all compiling to a Temporal suspend-and-signal pattern with SLA timers and a cross-workflow inbox.</p><div class="chips"><span class="chip">Temporal</span><span class="chip">RJSF</span></div></div>
+    <div class="card reveal"><h3>Channel adapters</h3><p>Web Chat is the air-gap default and approval surface. Slack, Telegram and Teams are connected-only and notify-and-deep-link, never approve in-channel.</p><div class="chips"><span class="chip">assistant-ui</span><span class="chip">Slack Bolt</span></div></div>
+  </div>
+
+  <div class="flow-lab reveal"><span class="fi"><i class="ph ph-shield-check"></i></span><b>Cross-cutting</b></div>
+  <div class="cgrid c3">
+    <div class="card reveal"><h3>Vault</h3><p>Envelope encryption with only ciphertext at rest, just-in-time in-memory decryption on the runner, never written to disk or logs. Pluggable BYO-vault facade.</p><div class="chips"><span class="chip">Google Tink</span><span class="chip">OpenBao</span></div></div>
+    <div class="card reveal"><h3>Audit hash-chain</h3><p>An append-only, SHA-256 hash-chained trail of every human and agent action, including LLM prompts and responses. Exports to SIEM, never transits to the vendor.</p><div class="chips"><span class="chip">SHA-256</span><span class="chip">SIEM export</span></div></div>
+    <div class="card reveal"><h3>Observability pipeline</h3><p>One OTel collector redacts sensitive fields before storage, then fans out to OpenSearch, VictoriaMetrics and Langfuse across six telemetry domains.</p><div class="chips"><span class="chip">OpenTelemetry</span><span class="chip">Langfuse</span></div></div>
+    <div class="card reveal"><h3>Identity / RBAC</h3><p>Two-tier RBAC plus optional ABAC, with folder isolation as the hard multi-tenant boundary. IdP federation via SAML/OIDC and SCIM, offline JWKS validation.</p><div class="chips"><span class="chip">Keycloak</span><span class="chip">SPIFFE</span></div></div>
+    <div class="card reveal"><h3>MCP / Skill Gateway</h3><p>Every tool call passes through a governed gateway: per-workflow scope allowlists, tool-description hashing and rug-pull guard, outbound DLP, cross-server chain detection.</p><div class="chips"><span class="chip">MCP SDK</span></div></div>
+    <div class="card reveal"><h3>Licensing</h3><p>Offline, signed, flat per-edition licensing locked to a cluster fingerprint. Distributes entitlements with no internet. Never bills per bot or per run.</p><div class="chips"><span class="chip">Ed25519</span><span class="chip">offline</span></div></div>
+  </div>
+</div></section>
+
+<!-- RUNTIME FLOWS -->
+<section id="runtime" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">05 / Runtime flows</span>
+    <h2 style="margin-top:10px">How the core flows run</h2>
+    <p>Three flows cover the lifecycle: authoring a workflow, executing it durably, and recovering when a UI changes. Every side effect is a retried activity, and durable state lives only in the event history.</p>
+  </div>
+
+  <div class="reveal" style="margin-bottom:30px">
+    <div class="flow-lab"><span class="fi"><i class="ph ph-chat-text"></i></span><b>AI authoring pipeline</b></div>
+    <div class="flow-row">
+      <div class="fnode"><i class="ph ph-file-text"></i><b>Comprehend</b><span>SOP or chat to IR</span></div>
+      <div class="fnode"><i class="ph ph-question"></i><b>Clarify</b><span>resolve gaps</span></div>
+      <div class="fnode"><i class="ph ph-file-code"></i><b>Author</b><span>IR to valid DSL</span></div>
+      <div class="fnode"><i class="ph ph-flask"></i><b>Self-test</b><span>graded, pass^N</span></div>
+      <div class="fnode"><i class="ph ph-presentation"></i><b>Present</b><span>diagram + report</span></div>
+      <div class="fnode key"><i class="ph ph-check-square-offset"></i><b>Approve</b><span>mandatory human gate</span></div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-bottom:30px">
+    <div class="flow-lab"><span class="fi"><i class="ph ph-play-circle"></i></span><b>Workflow execution</b></div>
+    <div class="flow-row">
+      <div class="fnode"><i class="ph ph-lightning"></i><b>Trigger</b><span>cron, webhook, manual</span></div>
+      <div class="fnode"><i class="ph ph-sliders"></i><b>Resolve config</b><span>hash-pinned snapshot</span></div>
+      <div class="fnode"><i class="ph ph-tree-structure"></i><b>Interpret</b><span>deterministic workflow</span></div>
+      <div class="fnode"><i class="ph ph-gear-six"></i><b>Activity</b><span>side-effect or LLM</span></div>
+      <div class="fnode"><i class="ph ph-shield-check"></i><b>Validate</b><span>post-step gate</span></div>
+      <div class="fnode key"><i class="ph ph-database"></i><b>Durable history</b><span>replay-safe state</span></div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="flow-lab"><span class="fi" style="background:rgba(242,112,35,.12);color:var(--pop)"><i class="ph ph-heartbeat"></i></span><b>Self-heal loop</b></div>
+    <div class="flow-row">
+      <div class="fnode"><i class="ph ph-warning-circle"></i><b>Detect</b><span>step or post-cond fail</span></div>
+      <div class="fnode"><i class="ph ph-stethoscope"></i><b>Diagnose</b><span>anchors + snapshot</span></div>
+      <div class="fnode"><i class="ph ph-arrows-clockwise"></i><b>Recover</b><span>fallback to vision</span></div>
+      <div class="fnode"><i class="ph ph-shield-check"></i><b>Validate</b><span>post-condition</span></div>
+      <div class="fnode"><i class="ph ph-scales"></i><b>Decide</b><span>suggest or auto</span></div>
+      <div class="fnode key"><i class="ph ph-git-diff"></i><b>Write back</b><span>reviewable DSL diff</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- DATA -->
+<section id="data" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">06 / Data architecture</span>
+    <h2 style="margin-top:10px">Polyglot persistence, each store for its job</h2>
+    <p>Git is the source of truth for logic and config. The Temporal event history is the source of truth for execution state. Heavy blobs are passed by reference, and secrets never leave the vault as plaintext at rest.</p>
+  </div>
+  <div class="tbl-wrap reveal" style="margin-bottom:30px">
+    <table class="tbl">
+      <thead><tr><th>Store</th><th>Holds</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><th>Git</th><td>DSL, config bundles, agent and trigger definitions, model definitions, prompts</td><td>Source of truth, reviewable like a PR, versioned, diff-able, replayable</td></tr>
+        <tr><th>PostgreSQL</th><td>Control-plane catalog and metadata, Temporal persistence, hash-chained audit</td><td>Relational, transactional, strong RBAC filtering, HA via replication</td></tr>
+        <tr><th>Temporal</th><td>Run state, event history, signals and timers, durable agent state</td><td>Durable execution: deterministic replay, idempotency, safe self-heal patching</td></tr>
+        <tr><th>OpenSearch</th><td>Traces, logs, full execution trace, cross-workflow task index</td><td>Search and incident investigation, lifecycle-managed retention</td></tr>
+        <tr><th>VictoriaMetrics</th><td>Metrics: cost per run, success rate, latency, tokens, ROI counters</td><td>Compressed time series with configurable retention and downsampling</td></tr>
+        <tr><th>Langfuse</th><td>LLM-observability traces, eval datasets, judge scores, prompt plane</td><td>LLM-domain observability and evaluation, telemetry disabled for air-gap</td></tr>
+        <tr><th>Object store</th><td>Files, screenshots, document-AI input and output, backups, offline bundles</td><td>Pass-by-reference keeps the event history small and replay-safe</td></tr>
+        <tr><th>Vault store</th><td>Secret ciphertext and wrapped data keys, versioned master key-ring</td><td>Envelope encryption, only ciphertext at rest, KMS or HSM auto-unseal</td></tr>
+        <tr><th>NATS JetStream</th><td>CloudEvents, run events, approval and alert events, webhook-OUT layer 1</td><td>Durable 1:N fan-out and dead-letter, always-on in-perimeter</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cgrid c4 reveal">
+    <div class="card"><div class="ico" style="color:var(--pop);background:rgba(242,112,35,.1)"><i class="ph ph-key"></i></div><h3>Secret</h3><p>AES-256-GCM envelope encryption, never plaintext at rest, just-in-time decrypt, wiped at teardown.</p></div>
+    <div class="card"><div class="ico"><i class="ph ph-seal-check"></i></div><h3>Audit</h3><p>Append-only, tamper-evident hash-chain, 12 to 24 months plus legal hold, integrity preserved after restore.</p></div>
+    <div class="card"><div class="ico"><i class="ph ph-user-circle-gear"></i></div><h3>PII</h3><p>Redacted at capture and at the collector before storage, with DSAR export and erasure support.</p></div>
+    <div class="card"><div class="ico"><i class="ph ph-chart-line"></i></div><h3>Telemetry</h3><p>Redacted and per-tenant scoped, lifecycle-managed with a disk-pressure guardrail so a full disk never crashes the platform.</p></div>
+  </div>
+</div></section>
+
+<!-- DEPLOYMENT -->
+<section id="deploy" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">07 / Deployment</span>
+    <h2 style="margin-top:10px">One artifact, three topologies</h2>
+    <p>The same offline-capable bundle and guided installer serve a single node, a high-availability cluster, or a fully air-gapped install. Moving between them never requires repackaging a workflow.</p>
+  </div>
+  <div class="tbl-wrap reveal" style="margin-bottom:30px">
+    <table class="tbl">
+      <thead><tr><th>Aspect</th><th>Single-node</th><th>HA (multi-node)</th><th>Air-gapped</th></tr></thead>
+      <tbody>
+        <tr><th>Shape</th><td>All control-plane on one node, co-located stores</td><td>3+ nodes across 3+ zones behind a load balancer, replicated DB</td><td>Single-node or HA, but zero egress</td></tr>
+        <tr><th>Network</th><td>Internet or local</td><td>Internet or internal</td><td>No internet</td></tr>
+        <tr><th>Availability</th><td>No HA commitment</td><td>99.9% control-plane uptime</td><td>Per the base tier</td></tr>
+        <tr><th>DR</th><td>Backup and restore</td><td>Active/passive to active/active</td><td>Base tier plus offline restore</td></tr>
+        <tr><th>Best for</th><td>POC, pilot, dev and test</td><td>Production, regulated, high SLA</td><td>Finance, healthcare, government</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="cgrid c3 reveal">
+    <div class="card"><div class="ico"><i class="ph ph-arrow-line-down"></i></div><h3>Outbound-only runners</h3><p>Runners enroll, heartbeat and pull leased jobs over mTLS. The control plane never connects into a runner, so runners can live in isolated zones.</p></div>
+    <div class="card"><div class="ico"><i class="ph ph-package"></i></div><h3>Signed offline bundle</h3><p>Helm plus Zarf image, chart and license tooling, verified with cosign, mirrored into a private OCI registry. No image pulls reach the internet.</p></div>
+    <div class="card"><div class="ico"><i class="ph ph-arrows-clockwise"></i></div><h3>Zero-downtime upgrades</h3><p>Durable execution plus Temporal worker versioning let in-flight runs finish on the old worker while new runs route to the new one. Rollback is a drain.</p></div>
+  </div>
+</div></section>
+
+<!-- SECURITY -->
+<section id="security" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">08 / Security</span>
+    <h2 style="margin-top:10px">Deny by default, defense in depth, everything auditable</h2>
+    <p>Least privilege at every layer, a semi-trusted AI wrapped in typed steps with guardrails, sandboxes and validators, and an immutable record of every action that never leaves your infrastructure.</p>
+  </div>
+  <div class="cgrid c3">
+    <div class="card reveal"><div class="ico"><i class="ph ph-fingerprint"></i></div><h3>Identity and access</h3><p>Two-tier RBAC plus ABAC, folder isolation as a hard boundary, SAML/OIDC and SCIM federation, offline JWKS, service accounts via OAuth2 and SPIFFE.</p></div>
+    <div class="card reveal"><div class="ico" style="color:var(--pop);background:rgba(242,112,35,.1)"><i class="ph ph-key"></i></div><h3>Secrets</h3><p>Envelope encryption with only ciphertext at rest, just-in-time in-memory decrypt on the runner, instant per-runner revocation, BYO-vault facade.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-cube-transparent"></i></div><h3>Sandbox isolation</h3><p>AI-generated and semi-trusted code runs in gVisor or a Firecracker microVM, never a bare container, with CPU, memory, wall-clock and egress quotas.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-plugs-connected"></i></div><h3>Governed tool access</h3><p>Every MCP tool call passes a gateway with scoped allowlists, version pinning, tool-description hashing, rug-pull guard and outbound DLP.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-seal-check"></i></div><h3>Immutable audit</h3><p>SHA-256 hash-chained trail of every human and agent action, including LLM prompts and responses. Tampering breaks the chain and is detected on verify.</p></div>
+    <div class="card reveal"><div class="ico"><i class="ph ph-lock-key"></i></div><h3>Air-gap and egress</h3><p>No phone-home, BYO LLM only, egress-gated webhooks off by default, signed offline import for models, patches and licenses.</p></div>
+  </div>
+  <div class="chips reveal" style="margin-top:26px; justify-content:center">
+    <span class="chip">SOC 2 CC7/CC8</span><span class="chip">EU AI Act</span><span class="chip">NIST AI RMF</span><span class="chip">ISO 42001</span><span class="chip">GDPR</span>
+  </div>
+</div></section>
+
+<!-- QUALITY ATTRIBUTES -->
+<section class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">09 / Quality attributes</span>
+    <h2 style="margin-top:10px">Non-functional goals mapped to tactics</h2>
+    <p>The quality attributes that drive enterprise adoption, each tied to the architectural tactic that delivers it.</p>
+  </div>
+  <div class="tbl-wrap reveal">
+    <table class="tbl">
+      <thead><tr><th>Quality attribute</th><th>Architectural tactic</th></tr></thead>
+      <tbody>
+        <tr><th>Reliability / durability</th><td>Temporal event history and replay, idempotency caching, post-step validator, lease fencing tokens</td></tr>
+        <tr><th>Security</th><td>Envelope encryption with JIT decrypt, KMS/HSM auto-unseal, gVisor sandbox, MCP gateway with DLP, outbound-only runners</td></tr>
+        <tr><th>Air-gap / sovereignty</th><td>BYO LLM, offline Helm plus Zarf bundle, private OCI mirror, offline signing, egress-gated webhooks</td></tr>
+        <tr><th>Scalability without per-bot</th><td>Control-plane and stateless-runner split, two-class fleet, queue-depth autoscale to zero, capability and zone targeting</td></tr>
+        <tr><th>Auditability</th><td>Immutable hash-chained audit of every action, SIEM export, full reproducible run trace, model version pinning, signed gate certificate</td></tr>
+        <tr><th>No lock-in</th><td>Portable DSL in Git, BYO-vault facade, BYO model registry, pluggable Doc-AI engine, OSS-only stack, spec-first OpenAPI</td></tr>
+        <tr><th>Observability</th><td>One OTel pipeline with redaction, fanning out to OpenSearch, VictoriaMetrics and Langfuse, with independent alerting and on-call</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<!-- TECH STACK -->
+<section id="stack" class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">10 / Technology stack</span>
+    <h2 style="margin-top:10px">Open source, self-hostable, by layer</h2>
+    <p>Every layer is built on permissively licensed open source that runs fully on your infrastructure. No SaaS-only dependency anywhere in the critical path.</p>
+  </div>
+  <div class="tbl-wrap reveal">
+    <table class="tbl">
+      <thead><tr><th>Layer</th><th>Pick</th><th>License</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><th>Durable execution</th><td class="tag-ok">Temporal</td><td><span class="mono">MIT</span></td><td>The durable backbone, single source of truth for run state and replay</td></tr>
+        <tr><th>DSL and validation</th><td class="tag-ok">XGrammar, Pydantic, Ajv</td><td><span class="mono">Apache / MIT</span></td><td>Closed-vocabulary JSON DSL, constrained decoding and schema validation</td></tr>
+        <tr><th>Agentic runtime</th><td class="tag-ok">Pydantic AI</td><td><span class="mono">MIT</span></td><td>Opt-in agentic steps as typed agents inside a Temporal activity</td></tr>
+        <tr><th>LLM serving</th><td class="tag-ok">vLLM</td><td><span class="mono">Apache</span></td><td>Reference BYO serving, OpenAI-compatible, runs air-gapped</td></tr>
+        <tr><th>Web automation</th><td class="tag-ok">Playwright, Browser-Use</td><td><span class="mono">Apache / MIT</span></td><td>Deterministic browser driver plus agentic browser</td></tr>
+        <tr><th>Desktop automation</th><td class="tag-ok">FlaUI + UIA</td><td><span class="mono">MIT</span></td><td>Windows desktop interactive automation</td></tr>
+        <tr><th>Document AI</th><td class="tag-ok">PaddleOCR, Docling</td><td><span class="mono">Apache / MIT</span></td><td>On-prem OCR, layout and table extraction</td></tr>
+        <tr><th>Sandbox</th><td class="tag-ok">gVisor (Firecracker)</td><td><span class="mono">Apache</span></td><td>Sandbox for ephemeral runners and dry-run authoring</td></tr>
+        <tr><th>Vault</th><td class="tag-ok">Google Tink, OpenBao</td><td><span class="mono">Apache / MPL</span></td><td>Envelope encryption and JIT decrypt, BYO-vault facade</td></tr>
+        <tr><th>Control-plane store</th><td class="tag-ok">PostgreSQL</td><td><span class="mono">BSD-like</span></td><td>Relational store, Temporal persistence, audit host</td></tr>
+        <tr><th>Event bus</th><td class="tag-ok">NATS JetStream, Valkey</td><td><span class="mono">Apache / BSD</span></td><td>Internal CloudEvents bus and cache</td></tr>
+        <tr><th>Observability</th><td class="tag-ok">OpenTelemetry, OpenSearch, VictoriaMetrics, Langfuse</td><td><span class="mono">Apache / MIT</span></td><td>One telemetry pipeline fanning out to three stores</td></tr>
+        <tr><th>Identity</th><td class="tag-ok">Keycloak, SPIFFE/SPIRE</td><td><span class="mono">Apache</span></td><td>SAML/OIDC plus SCIM and workload identity</td></tr>
+        <tr><th>API and gateway</th><td class="tag-ok">oapi-codegen, APISIX</td><td><span class="mono">Apache / MIT</span></td><td>Unified OpenAPI 3.1 REST API</td></tr>
+        <tr><th>Installer / air-gap</th><td class="tag-ok">Helm + Zarf, cosign</td><td><span class="mono">Apache</span></td><td>Guided installer, signed offline bundle, private OCI mirror</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<!-- ADR -->
+<section class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">11 / Decisions</span>
+    <h2 style="margin-top:10px">Key architecture decisions</h2>
+    <p>The defining decisions, all accepted. Each one trades a tempting shortcut for long-term reliability, auditability or no lock-in.</p>
+  </div>
+  <div class="adrlist">
+    <div class="adr reveal"><span class="aid">ADR-01</span><p><b>Interpreter, not codegen.</b> The DSL is data for one deterministic Temporal workflow. An AI fix to the DSL runs at once, with no worker rebuild or redeploy.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-02</span><p><b>Temporal is the only backbone.</b> Adopt it, do not build, and keep no second checkpointer. Durability, replay and state are a single source of truth.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-03</span><p><b>Agents inside activities.</b> Agentic steps are opt-in Pydantic AI agents running inside an activity, composed on Temporal, not a heavy agent framework.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-04</span><p><b>Stateless per run.</b> A run's state is the DSL plus input plus event history. No free-form agent memory leaking across runs.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-05</span><p><b>BYO LLM only.</b> Pluggable cloud or local endpoint, with an eval harness and sizing guide shipped, never bundled weights.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-06</span><p><b>Self-heal suggest-only by risk tier.</b> Low can auto-apply if enabled, high always pauses for human approval. Fixes are reviewable diffs into versioned DSL.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-13</span><p><b>Approval only in the Console.</b> Channels notify and deep-link, never approve in-channel. Identity and channel are audited.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-16</span><p><b>Flat per-edition licensing.</b> Two editions by capability, never per bot or per run. Ed25519 offline, cluster-fingerprinted, no phone-home.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-18</span><p><b>Air-gap-first.</b> Control-plane and runner split, offline bundle and registry, offline signing, guided installer with a hard-block preflight.</p></div>
+    <div class="adr reveal"><span class="aid">ADR-20</span><p><b>Diagram strictly read-only.</b> Render DSL to diagram one way only. No round-trip and no drag-and-drop editor that could drift from the source.</p></div>
+  </div>
+</div></section>
+
+<!-- RISKS -->
+<section class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="shead reveal">
+    <span class="snum">12 / Risks</span>
+    <h2 style="margin-top:10px">Risks the architecture absorbs</h2>
+    <p>The hardest failure modes in enterprise automation, and the structural decision that contains each one.</p>
+  </div>
+  <div class="cgrid c2">
+    <div class="risk reveal"><div class="rh"><i class="ph ph-warning"></i><b>AI non-determinism and hallucination</b></div><p>An LLM could invent a parameter, fake a success, or mutate a running step.</p><p class="mit"><b>Contained by:</b> a deterministic recorded core, post-step validators and tool-receipt verification, risk-tiered human approval, suggest-only by default, and model version pinning for replay.</p></div>
+    <div class="risk reveal"><div class="rh"><i class="ph ph-warning"></i><b>Windows interactive session</b></div><p>Desktop GUI cannot run in a container or Session 0, and breaks silently when a disconnect changes resolution.</p><p class="mit"><b>Contained by:</b> a dedicated interactive session manager with auto-login, a pinned display resolution, per-session slots, and a persistent runner class separate from the ephemeral fleet.</p></div>
+    <div class="risk reveal"><div class="rh"><i class="ph ph-warning"></i><b>Exactly-once side effects</b></div><p>A re-dispatched job after a false heartbeat timeout could run a payment or email twice.</p><p class="mit"><b>Contained by:</b> lease fencing plus idempotency keys, Temporal result caching so completed steps never rerun, and outbound-only lease-pull runners.</p></div>
+    <div class="risk reveal"><div class="rh"><i class="ph ph-warning"></i><b>Air-gap upgrade and migration</b></div><p>Install, upgrade, CVE patch, DR and model update are all harder offline.</p><p class="mit"><b>Contained by:</b> air-gap as a designed-for scenario, signed offline bundles and a registry mirror, documented offline upgrade and patch paths, and a hard-block preflight.</p></div>
+    <div class="risk reveal"><div class="rh"><i class="ph ph-warning"></i><b>MCP / skill supply chain</b></div><p>Tool poisoning, rug-pull, cross-server exfiltration, confused-deputy OAuth.</p><p class="mit"><b>Contained by:</b> a governed gateway with no open marketplace, namespace verification, version pinning, tool-description hashing, scoped RBAC, outbound DLP, and signed import.</p></div>
+    <div class="risk reveal"><div class="rh"><i class="ph ph-warning"></i><b>BYO-model variance</b></div><p>A customer model that is too weak degrades authoring and self-heal.</p><p class="mit"><b>Contained by:</b> an eval harness and sizing guide to certify a model before production, one code path against any model, and an AI-Quality gate that blocks a regression.</p></div>
+  </div>
+</div></section>
+
+<!-- CTA -->
+<section class="sec-pad" style="padding-top:0"><div class="wrap">
+  <div class="cta-band reveal">
+    <h2>Want the deep-dive walkthrough?</h2>
+    <p>We can take your architecture, security and procurement teams through any layer of this design, end to end, against your own requirements.</p>
+    <a href="index.html#cta" class="btn btn-primary" style="padding:14px 26px; font-size:16px"><i class="ph ph-calendar-check"></i>Book a demo</a>
+  </div>
+</div></section>
+
+<!-- FOOTER -->
+<footer><div class="wrap">
+  <div class="foot">
+    <div>
+      <a href="index.html" class="brand"><svg class="mark" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="amg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1E8FD6"/><stop offset="1" stop-color="#1FB85C"/></linearGradient></defs><rect width="36" height="36" rx="9" fill="url(#amg2)"/><path d="M8 12.5 C 16 12.5, 17 18, 23 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M8 23.5 C 16 23.5, 17 18, 23 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".82"/><circle cx="25.4" cy="18" r="3.4" fill="#F27023"/></svg>AMOS FLOW</a>
+      <p class="tag">An AI-powered automation platform that runs on your own infrastructure. The reliability of rules, the intelligence of AI.</p>
+      <div class="fpt"><span class="fpt-by">An FPT company</span><img class="fpt-logo" src="fpt-logo.svg" alt="FPT" width="46" height="32"></div>
+    </div>
+    <div class="foot-links">
+      <div class="foot-col"><h4>Architecture</h4><a href="#principles">Principles</a><a href="#components">Components</a><a href="#data">Data</a><a href="#stack">Tech stack</a></div>
+      <div class="foot-col"><h4>Product</h4><a href="index.html#hybrid">Approach</a><a href="index.html#how">How it works</a><a href="index.html#features">Features</a></div>
+      <div class="foot-col"><h4>Contact</h4><a href="index.html#cta">Book a demo</a><a href="mailto:hello@amosflow.example">Email</a></div>
+    </div>
+  </div>
+  <div class="copyr"><span>2026 AMOS FLOW. Architecture overview.</span><span class="mono">self-hosted · air-gap-first · durable execution</span></div>
+</div></footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rev = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(ents){
+      ents.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    },{threshold:.12, rootMargin:'0px 0px -6% 0px'});
+    rev.forEach(function(el,i){ el.style.transitionDelay=((i%5)*50)+'ms'; io.observe(el); });
+  } else { rev.forEach(function(el){ el.classList.add('in'); }); }
+
+  var hb=document.getElementById('hb'), mm=document.getElementById('mm');
+  if(hb){ hb.addEventListener('click',function(){ mm.classList.toggle('open'); });
+    mm.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mm.classList.remove('open');});}); }
+})();
+</script>
+</body>
+</html>
