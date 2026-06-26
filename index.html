@@ -115,45 +115,81 @@
   .stat .lab{color:var(--muted); font-size:15px; margin-top:12px; max-width:24ch}
   .band-note{color:var(--faint); font-size:13px; padding:0 30px 40px}
 
-  /* ---------- hybrid hub ---------- */
-  .hub{display:grid; grid-template-columns:1fr minmax(220px,1.05fr) 1fr; gap:18px; align-items:stretch; margin-bottom:48px}
-  .hub-node{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:30px 26px; display:flex; flex-direction:column; justify-content:center; gap:8px; position:relative; overflow:hidden}
-  .hub-node.ag{background:var(--grad-soft); border-color:rgba(31,184,92,.30)}
-  .hub-node .ico{width:50px;height:50px;border-radius:13px; display:flex;align-items:center;justify-content:center; font-size:26px; color:var(--accent2); background:rgba(31,184,92,.10); margin-bottom:10px}
-  .hub-node h3{font-size:22px}
-  .hub-node .nt{color:var(--muted); font-size:14px}
-  .hub-mid{display:flex; flex-direction:column; justify-content:center; gap:18px; padding:6px 4px}
-  .hub-badge{align-self:center; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:12.5px; letter-spacing:.2em; color:#04111f; background:var(--grad); padding:9px 18px; border-radius:999px; box-shadow:0 10px 28px rgba(31,184,92,.32)}
-  .arrow{display:flex; flex-direction:column; gap:7px; align-items:center}
-  .arrow .alab{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--faint); letter-spacing:.03em; text-align:center}
-  .fline{position:relative; width:100%; height:2px; border-radius:2px; background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent); background-size:200% 100%; animation:flowx 2.4s linear infinite}
-  .fline i{position:absolute; top:50%; transform:translateY(-50%); font-size:17px; color:var(--accent2); background:var(--bg); border-radius:50%}
-  .fline.l i{left:-3px} .fline.r i{right:-3px}
-  @keyframes flowx{to{background-position:-200% 0}}
+  /* ---------- comparison table ---------- */
+  .cmp-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); -webkit-overflow-scrolling:touch}
+  .cmp-tbl{width:100%; min-width:680px; border-collapse:collapse; font-size:14.5px}
+  .cmp-tbl th,.cmp-tbl td{padding:16px 18px; text-align:left}
+  .cmp-tbl thead th{font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600; color:var(--text); border-bottom:1px solid var(--border); vertical-align:bottom}
+  .cmp-tbl thead th small{display:block; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:400; color:var(--faint); margin-top:6px; letter-spacing:.03em}
+  .cmp-tbl tbody th{font-weight:400; color:var(--muted); font-family:'Sora',sans-serif; font-size:14px}
+  .cmp-tbl tbody tr+tr th,.cmp-tbl tbody tr+tr td{border-top:1px solid var(--border-soft)}
+  .cmp-tbl td .ci{display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:12.5px}
+  .cmp-tbl td.y .ci{color:var(--ok)} .cmp-tbl td.n .ci{color:#8294AD} .cmp-tbl td.n i{color:var(--danger)} .cmp-tbl td.p .ci{color:var(--warning)}
+  .cmp-tbl th:nth-child(4),.cmp-tbl td:nth-child(4){background:var(--grad-soft)}
+  .cmp-tbl thead th:nth-child(4),.cmp-tbl thead th:nth-child(4) small{color:var(--accent2)}
+  .cmp-tbl th:first-child{position:sticky; left:0; background:var(--surface); z-index:2; min-width:210px}
+  .cmp-tbl thead th:first-child{z-index:3}
 
-  /* ---------- capability cards ---------- */
-  .caps{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
-  .cap{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:24px 22px; transition:.3s var(--ease)}
-  .cap:hover{transform:translateY(-3px); border-color:var(--accent2)}
-  .cap .dir{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent2); letter-spacing:.04em; border:1px solid var(--border); border-radius:999px; padding:4px 11px; display:inline-block}
-  .cap .ico{width:44px;height:44px;border-radius:12px; display:flex;align-items:center;justify-content:center; font-size:23px; color:var(--accent2); background:rgba(31,184,92,.10); margin:16px 0 14px}
-  .cap h3{font-size:17px; margin-bottom:7px}
-  .cap p{font-size:13.5px; color:var(--muted)}
+  /* ---------- merge animation ---------- */
+  .mscroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .mstage{position:relative; min-width:640px; min-height:340px; border:1px solid var(--border); border-radius:20px; padding:32px 36px 40px; overflow:hidden;
+     background:radial-gradient(720px 280px at 50% -12%, rgba(31,184,92,.07), transparent 60%), var(--bg2)}
+  .sup{display:flex; align-items:center; gap:16px; border:1px solid rgba(31,184,92,.35); border-radius:14px; background:var(--grad-soft); padding:15px 20px;
+     opacity:0; transform:translateY(-26px); transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .sup-ic{width:42px;height:42px;border-radius:11px;background:var(--grad);color:#04111f;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .sup-tx b{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;display:block}
+  .sup-tx span{color:var(--muted);font-size:13px}
+  .sup-verbs{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .sup-verbs span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);border:1px solid var(--border);border-radius:999px;padding:5px 11px;background:var(--surface); transition:.3s}
+  .wfrow{display:flex; align-items:center; justify-content:center; gap:4px; margin-top:72px}
+  .wstep{position:relative; width:126px; border:1px solid var(--border); border-radius:12px; background:var(--surface); padding:16px 12px; text-align:center; transition:.5s var(--ease)}
+  .wstep .wic{display:block; font-size:24px; color:var(--accent)}
+  .wstep .wl{display:block; font-size:11.5px; color:var(--muted); margin-top:7px; font-family:'JetBrains Mono',monospace; white-space:nowrap}
+  .warrow{color:var(--faint); font-size:18px; flex-shrink:0}
+  .wstep .clink{position:absolute; left:50%; top:-72px; width:2px; height:72px; transform:translateX(-50%) scaleY(0); transform-origin:top;
+     background:linear-gradient(180deg, var(--accent2), rgba(31,184,92,.12)); transition:transform .55s var(--ease)}
+  .wstep.agent{border-color:rgba(242,112,35,.5)}
+  .wstep.agent .wic{color:var(--pop)}
+  .taskbadge{position:absolute; top:-13px; left:50%; transform:translateX(-50%) translateY(-6px) scale(.6); opacity:0; transition:.5s var(--ease);
+     font-family:'JetBrains Mono',monospace; font-size:10px; color:#180a02; background:var(--pop); padding:3px 9px; border-radius:999px; white-space:nowrap; font-weight:500}
+  .orb{position:absolute; right:44px; top:55%; transform:translateY(-50%); display:flex;flex-direction:column;align-items:center;gap:9px; transition:.7s var(--ease)}
+  .orb .ob{width:82px;height:82px;border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:32px; color:#fff;
+     background:radial-gradient(circle at 50% 38%, rgba(31,184,92,.5), rgba(30,143,214,.22)); border:1px solid rgba(31,184,92,.4); box-shadow:0 0 40px rgba(31,184,92,.28); animation:orbf 3.5s ease-in-out infinite}
+  @keyframes orbf{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .orb span{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted)}
+  /* phase transitions (merged + live share the assembled layout) */
+  .mstage.merged .sup,.mstage.live .sup{opacity:1; transform:none}
+  .mstage.merged .orb,.mstage.live .orb{opacity:0; transform:translateY(-50%) translateX(46px) scale(.55)}
+  .mstage.merged .clink,.mstage.live .clink{transform:translateX(-50%) scaleY(1)}
+  .wfrow>div:nth-of-type(1) .clink{transition-delay:.05s}
+  .wfrow>div:nth-of-type(2) .clink{transition-delay:.18s}
+  .wfrow>div:nth-of-type(3) .clink{transition-delay:.31s}
+  .wfrow>div:nth-of-type(4) .clink{transition-delay:.44s}
+  .mstage.merged .wstep.agent .taskbadge,.mstage.live .wstep.agent .taskbadge{opacity:1; transform:translateX(-50%) translateY(0) scale(1); transition-delay:.55s}
+  .mstage.merged .wstep.agent{box-shadow:0 0 22px rgba(242,112,35,.28)}
+  /* live pulses */
+  .mstage.live .clink{animation:clinkpulse 2.4s var(--ease) infinite}
+  @keyframes clinkpulse{0%,100%{opacity:.45}50%{opacity:1}}
+  .mstage.live .wstep.agent{animation:agpulse 2.2s ease-in-out infinite}
+  @keyframes agpulse{0%,100%{box-shadow:0 0 8px rgba(242,112,35,.18)}50%{box-shadow:0 0 26px rgba(242,112,35,.42)}}
+  .mstage.live .wstep.heal{animation:healblip 5s ease-in-out infinite}
+  @keyframes healblip{0%,66%,100%{border-color:var(--border)}74%{border-color:var(--danger)}86%{border-color:var(--ok)}}
+  .mstage.live .sup-verbs span{animation:verbcyc 4.4s linear infinite}
+  .mstage.live .sup-verbs span:nth-child(2){animation-delay:1.1s}
+  .mstage.live .sup-verbs span:nth-child(3){animation-delay:2.2s}
+  .mstage.live .sup-verbs span:nth-child(4){animation-delay:3.3s}
+  @keyframes verbcyc{0%,12%{border-color:var(--accent2); background:rgba(31,184,92,.14)}24%,100%{border-color:var(--border); background:var(--surface)}}
+  .mcap{margin:20px auto 0; text-align:center; color:var(--muted); font-size:15.5px; max-width:64ch; min-height:50px}
 
-  /* ---------- comparison ---------- */
-  .cmp{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:60px}
-  .cmp-col{border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:30px 26px}
-  .cmp-col.hl{border-color:rgba(31,184,92,.42); background:var(--grad-soft); box-shadow:0 22px 56px rgba(0,0,0,.34)}
-  .cmp-h{margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--border)}
-  .cmp-h h3{font-size:21px}
-  .cmp-sub{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--faint); display:block; margin-top:6px; letter-spacing:.04em}
-  .cmp-col.hl .cmp-sub{color:var(--accent2)}
-  .cmp-list{display:flex; flex-direction:column; gap:14px}
-  .cmp-li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--muted)}
-  .cmp-li i{font-size:19px; margin-top:1px; flex-shrink:0}
-  .cmp-li.y{color:var(--text)} .cmp-li.y i{color:var(--ok)}
-  .cmp-li.n i{color:var(--faint)}
-  .cmp-li.p i{color:var(--warning)}
+  /* ---------- two-role legend ---------- */
+  .roles{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:30px}
+  .role{display:flex; gap:15px; align-items:flex-start; border:1px solid var(--border); border-radius:var(--r-card); background:var(--surface); padding:22px 24px}
+  .role .ric{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+  .role.sup-r .ric{color:var(--accent2); background:rgba(31,184,92,.12)}
+  .role.task-r .ric{color:var(--pop); background:rgba(242,112,35,.12)}
+  .role h3{font-size:18px; margin-bottom:6px}
+  .role p{font-size:14px; color:var(--muted)}
+  .roles-note{text-align:center; margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--faint)}
 
   /* ---------- pipeline ---------- */
   .pipe{position:relative; display:grid; grid-template-columns:repeat(6,1fr); gap:16px}
@@ -291,16 +327,12 @@
     .gov>*,.heal>*{min-width:0} .blk{min-width:0}
     .layer{grid-template-columns:1fr; gap:14px}
     .roi{grid-template-columns:repeat(2,1fr)}
-    .hub{grid-template-columns:1fr; gap:14px} .hub-mid{flex-direction:row; justify-content:center; gap:24px; flex-wrap:wrap}
-    .arrow{flex:1; min-width:130px}
-    .caps{grid-template-columns:repeat(2,1fr)}
-    .cmp{grid-template-columns:1fr}
+    .roles{grid-template-columns:1fr}
   }
   @media(max-width:680px){
     .sec-pad{padding:72px 0} .wrap{padding:0 20px}
     .navlinks,.nav-right .btn-ghost{display:none} .hamburger{display:flex; align-items:center; justify-content:center}
     .pipe{grid-template-columns:repeat(2,1fr)} .bento,.roi,.stats{grid-template-columns:1fr}
-    .caps{grid-template-columns:1fr} .hub-mid{flex-direction:column}
     .chain{padding:24px 16px} .blocks{gap:5px} .blk{padding:14px 5px} .blk .h{font-size:9px} .link-i{font-size:13px}
     .stat{border-right:none}
     .mobile-menu.open{display:flex}
@@ -422,92 +454,94 @@
 <section id="hybrid" class="sec-pad"><div class="wrap">
   <div class="sec-head reveal">
     <h2>Fixed workflows and AI agents, working as one</h2>
-    <p>Most platforms make you choose: rigid automation that is reliable but rigid, or AI agents that are flexible but unpredictable. AMOS runs both together, so each one covers the other's weakness.</p>
+    <p>Every team faces the same trade-off today. Look at the two pure approaches side by side, then watch how AMOS combines them into one model.</p>
   </div>
 
-  <div class="hub reveal">
-    <div class="hub-node wf">
-      <div class="ico"><i class="ph ph-flow-arrow"></i></div>
-      <h3>Fixed workflow</h3>
-      <p class="nt">Reliable, repeatable, and fully auditable. The dependable rails your business runs on.</p>
-    </div>
-    <div class="hub-mid" aria-hidden="true">
-      <div class="arrow">
-        <span class="alab">builds, runs, repairs</span>
-        <div class="fline l"><i class="ph-fill ph-caret-left"></i></div>
-      </div>
-      <span class="hub-badge">HYBRID</span>
-      <div class="arrow">
-        <div class="fline r"><i class="ph-fill ph-caret-right"></i></div>
-        <span class="alab">delegates the hard steps</span>
-      </div>
-    </div>
-    <div class="hub-node ag">
-      <div class="ico"><i class="ph ph-sparkle"></i></div>
-      <h3>AI agent</h3>
-      <p class="nt">Adaptive and context-aware. Handles change and ambiguity that fixed steps cannot.</p>
-    </div>
+  <!-- 1. Comparison first -->
+  <div class="cmp-wrap reveal">
+    <table class="cmp-tbl">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>Workflow only<small>Legacy RPA</small></th>
+          <th>AI agent only<small>Most AI tools today</small></th>
+          <th>AMOS hybrid<small>Both, by design</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Reliable and repeatable</th>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+          <td class="n"><span class="ci"><i class="ph-fill ph-x-circle"></i>No</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Adapts when apps change</th>
+          <td class="n"><span class="ci"><i class="ph-fill ph-x-circle"></i>No</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Auditable and explainable</th>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+          <td class="n"><span class="ci"><i class="ph-fill ph-x-circle"></i>No</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Handles ambiguous steps</th>
+          <td class="n"><span class="ci"><i class="ph-fill ph-x-circle"></i>No</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Predictable cost at scale</th>
+          <td class="p"><span class="ci"><i class="ph-fill ph-minus-circle"></i>Limited</span></td>
+          <td class="p"><span class="ci"><i class="ph-fill ph-minus-circle"></i>Limited</span></td>
+          <td class="y"><span class="ci"><i class="ph-fill ph-check-circle"></i>Yes</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="caps">
-    <div class="cap reveal">
-      <span class="dir">agent → workflow</span>
-      <div class="ico"><i class="ph ph-magic-wand"></i></div>
-      <h3>Builds workflows</h3>
-      <p>Describe a process and the agent generates a ready-to-run workflow for you to approve.</p>
-    </div>
-    <div class="cap reveal">
-      <span class="dir">agent → workflow</span>
-      <div class="ico"><i class="ph ph-play-circle"></i></div>
-      <h3>Triggers and monitors</h3>
-      <p>The agent starts workflows, watches every run, and flags problems as they happen.</p>
-    </div>
-    <div class="cap reveal">
-      <span class="dir">agent → workflow</span>
-      <div class="ico"><i class="ph ph-heartbeat"></i></div>
-      <h3>Repairs failures</h3>
-      <p>When a run breaks, the agent diagnoses the cause and proposes a fix for approval.</p>
-    </div>
-    <div class="cap reveal">
-      <span class="dir">workflow → agent</span>
-      <div class="ico"><i class="ph ph-puzzle-piece"></i></div>
-      <h3>Handles unstable steps</h3>
-      <p>Workflows hand off unpredictable steps to the agent, then continue on reliable rails.</p>
-    </div>
+  <!-- 2. The merge animation -->
+  <div class="sec-head reveal" style="margin:66px auto 26px; text-align:center; max-width:58ch">
+    <h2 style="font-size:clamp(26px,3vw,38px)">Watch the two become one</h2>
+    <p style="margin-left:auto;margin-right:auto">A reliable workflow and AI agents merge into a single hybrid model that runs, watches and repairs itself.</p>
   </div>
 
-  <div class="cmp">
-    <div class="cmp-col reveal">
-      <div class="cmp-h"><h3>Fixed workflows only</h3><span class="cmp-sub">Legacy RPA</span></div>
-      <div class="cmp-list">
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Reliable and repeatable</div>
-        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Stops working when apps change</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Fully auditable</div>
-        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Cannot handle ambiguity</div>
-        <div class="cmp-li p"><i class="ph ph-minus-circle"></i>Cost climbs with every robot</div>
+  <div class="mscroll reveal">
+    <div class="mstage apart" id="merge">
+      <div class="sup">
+        <div class="sup-ic"><i class="ph ph-shield-check"></i></div>
+        <div class="sup-tx"><b>Supervisor agent</b><span>runs the whole workflow</span></div>
+        <div class="sup-verbs"><span>Build</span><span>Trigger</span><span>Monitor</span><span>Heal</span></div>
       </div>
-    </div>
-    <div class="cmp-col reveal">
-      <div class="cmp-h"><h3>AI agents only</h3><span class="cmp-sub">Most AI tools today</span></div>
-      <div class="cmp-list">
-        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Results can be unpredictable</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Adapts when apps change</div>
-        <div class="cmp-li n"><i class="ph ph-x-circle"></i>Hard to audit and explain</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Handles ambiguity well</div>
-        <div class="cmp-li p"><i class="ph ph-minus-circle"></i>Running costs are hard to predict</div>
+      <div class="wfrow">
+        <div class="wstep"><span class="clink"></span><i class="ph ph-cube wic"></i><span class="wl">Step 1</span></div>
+        <i class="ph ph-caret-right warrow"></i>
+        <div class="wstep heal"><span class="clink"></span><i class="ph ph-cube wic"></i><span class="wl">Step 2</span></div>
+        <i class="ph ph-caret-right warrow"></i>
+        <div class="wstep agent"><span class="clink"></span><span class="taskbadge">task agent</span><i class="ph ph-sparkle wic"></i><span class="wl">Unstable step</span></div>
+        <i class="ph ph-caret-right warrow"></i>
+        <div class="wstep"><span class="clink"></span><i class="ph ph-cube wic"></i><span class="wl">Step 4</span></div>
       </div>
-    </div>
-    <div class="cmp-col hl reveal">
-      <div class="cmp-h"><h3>AMOS hybrid</h3><span class="cmp-sub">The best of both</span></div>
-      <div class="cmp-list">
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Reliable and repeatable</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Adapts and repairs itself</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Fully auditable</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Handles ambiguity safely</div>
-        <div class="cmp-li y"><i class="ph ph-check-circle"></i>Predictable, flat pricing</div>
-      </div>
+      <div class="orb" aria-hidden="true"><div class="ob"><i class="ph ph-sparkle"></i></div><span>AI agent</span></div>
     </div>
   </div>
+  <p class="mcap" id="mcap">Today you choose one: a rigid workflow that breaks when things change, or a free-roaming agent you cannot fully trust.</p>
+
+  <!-- 3. Two distinct agent roles -->
+  <div class="roles">
+    <div class="role sup-r reveal">
+      <div class="ric"><i class="ph ph-shield-check"></i></div>
+      <div><h3>Supervisor agent</h3><p>Runs the workflow from the outside. It builds the workflow, triggers each run, monitors its health, and heals it when a step fails.</p></div>
+    </div>
+    <div class="role task-r reveal">
+      <div class="ric"><i class="ph ph-sparkle"></i></div>
+      <div><h3>Task agent</h3><p>Lives inside a single step. It handles the unstable or ambiguous actions that fixed rules cannot, then hands control straight back.</p></div>
+    </div>
+  </div>
+  <p class="roles-note reveal">Two specialized agents, not one. Each is tuned for its own job.</p>
 </div></section>
 
 <!-- HOW IT WORKS -->
@@ -777,6 +811,25 @@
 
   // audit chain live
   var chain=document.getElementById('chain'); if(chain && !reduce){ chain.classList.add('live'); }
+
+  // hybrid merge animation
+  var merge=document.getElementById('merge'), mcap=document.getElementById('mcap');
+  if(merge){
+    var phases=[
+      {cls:'apart', t:'Today you choose one: a rigid workflow that breaks when things change, or a free-roaming agent you cannot fully trust.'},
+      {cls:'merged', t:'AMOS makes them one. A supervisor agent takes control of the workflow, and a separate task agent drops into the step that needs it.'},
+      {cls:'live', t:'It builds, triggers, monitors and heals on its own. Agents work only where you need them, and the supervisor and task agents can be two different agents.'}
+    ];
+    var durs=[3000,3400,6400], k=0;
+    function show(i){ merge.classList.remove('apart','merged','live'); merge.classList.add(phases[i].cls); if(mcap) mcap.textContent=phases[i].t; }
+    if(reduce){ show(2); }
+    else{
+      var started=false;
+      function loop(){ show(k); var d=durs[k]; k=(k+1)%phases.length; setTimeout(loop, d); }
+      var mio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && !started){ started=true; k=0; loop(); } }); },{threshold:.3});
+      mio.observe(merge);
+    }
+  }
 
   // mobile menu
   var hb=document.getElementById('hb'), mm=document.getElementById('mm');
